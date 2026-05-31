@@ -259,3 +259,5 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix
 
 .hint-text{font-size:11.5px;color:var(--ink-soft);margin-top:9px;line-height:1.55;}
 .hint-text b{color:var(--terra-d);font-weight:700;}
+
+.ext-badge{display:inline-block;margin-left:5px;padding:1px 6px;background:rgba(47,107,91,.14);color:var(--teal);font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;border-radius:5px;vertical-align:middle;letter-spacing:.04em;line-height:1.4;}

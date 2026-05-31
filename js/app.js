@@ -15,6 +15,8 @@ function esc(s){return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').repl
 const IC_STUDY='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="15" rx="2"/><path d="M8 6V4.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-1.5"/></svg>';
 const IC_BOOK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>';
 const IC_CHART='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><rect x="5" y="11" width="3.5" height="7" rx="1"/><rect x="10.2" y="6" width="3.5" height="12" rx="1"/><rect x="15.5" y="13" width="3.5" height="5" rx="1"/></svg>';
+const ADDED_CATS=new Set(["gen","coreml","ops","biz"]);
+const isAdded=t=>ADDED_CATS.has(t[3]);
 const SPK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg>';
 
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -134,7 +136,7 @@ function renderHome(){
     +'<button class="cta" data-act="'+ctaA+'">'+ctaT+'<small>'+ctaS+'</small><span class="arr">→</span></button>'
     +resume
     +'<div class="sec-label">오늘의 단어</div>'
-    +'<div class="wod"><div class="wod-top"><span class="wod-cat">'+CATS[wt[3]]+'</span><span class="wod-num">No.'+String(wi+1).padStart(2,"0")+'</span></div>'
+    +'<div class="wod"><div class="wod-top"><span class="wod-cat">'+CATS[wt[3]]+'</span><span class="wod-num">No.'+String(wi+1).padStart(2,"0")+(isAdded(wt)?' <span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</span></div>'
     +'<div class="wod-line"><div class="wod-ko">'+esc(wt[0])+'</div><button class="wod-spk" data-say="'+esc(wt[1])+'" aria-label="발음">'+SPK+'</button></div>'
     +'<div class="wod-en">'+esc(wt[1])+'</div><div class="wod-desc">'+esc(wt[2])+'</div>'
     +'<button class="wod-cta" data-act="cat-'+wt[3]+'">사전에서 이 분류 보기 →</button></div>'
@@ -176,7 +178,7 @@ function renderList(){
   items.forEach(({t,i})=>{
     if(t[3]!==last&&activeCat==="all"&&!query){h+='<div class="cat-head">'+CATS[t[3]]+'<span></span></div>';last=t[3];}
     const k=known.has(i);
-    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+'</div><div class="entry"><div class="term-line"><span class="ko">'+t[0]+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+t[1]+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button></div></article>';
+    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+(isAdded(t)?'<span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</div><div class="entry"><div class="term-line"><span class="ko">'+t[0]+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+t[1]+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button></div></article>';
   });
   $("list").innerHTML=h;
   $$(".speak-btn",$("list")).forEach(b=>b.onclick=()=>speak(b.dataset.say,b));
