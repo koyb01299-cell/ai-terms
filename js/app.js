@@ -42,12 +42,22 @@ function loadVoices(){
   let v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name)&&(!isIOS||x.localService===true));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang));
-  // 중복 제거: 같은 이름 음성이 여러 개일 때, 한국어 로케일/저음질 변형 배제하고 가장 자연스러운 하나만 남김
-  const qScore=x=>{const u=(x.voiceURI||"").toLowerCase();
-    if(/[._\-\/]ko[._\-\/]|korean|ko-kr|ko_kr/i.test(u))return 99;
-    if(/premium|enhanced|siri|neural|natural/i.test(u))return 0;
-    if(/compact/i.test(u))return 2;
-    return 1;};
+  // 음질 점수: Apple en-US 번들/프리미엄 강력 선호, 한국어 변형/콩글리쉬 변형 강력 배제
+  const qScore=x=>{
+    const u=(x.voiceURI||"").toLowerCase();
+    const lg=(x.lang||"").toLowerCase();
+    // 한국어 로케일/한국어 이름 음성 — 99999점 (절대 선택 안 됨)
+    if(/[._\-\/]ko[._\-\/]|korean|ko-kr|ko_kr|yuna|minsu|jian|sora/i.test(u+" "+x.name.toLowerCase()))return 99999;
+    // 영어 region 코드 없으면 (그냥 "en") 의심스러우니 페널티
+    if(!/^en[-_]/i.test(lg))return 50;
+    let s=100;
+    if(/com\.apple\.[^"]*en[-_]us/i.test(u))s-=60;       // Apple 공식 미국 영어 번들 최우선
+    else if(/com\.apple\.[^"]*en[-_](gb|au|ie|za|in)/i.test(u))s-=40;  // Apple 영국·호주 등
+    if(/premium|enhanced|natural|neural/i.test(u))s-=30;
+    if(/siri/i.test(u))s-=20;
+    if(/compact/i.test(u))s+=15;                            // compact는 음질 낮음
+    return s;
+  };
   const dedup=new Map();
   for(const x of v){const k=x.name.toLowerCase();const cur=dedup.get(k);
     if(!cur||qScore(x)<qScore(cur))dedup.set(k,x);}
@@ -317,7 +327,7 @@ document.addEventListener("click",e=>{
 $$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.v));
 $("gearBtn").onclick=openSheet;
 $("backdrop").onclick=closeSheet;
-$("voiceSel").addEventListener("change",e=>{chosenVoice=voices[+e.target.value]||null;savedVoiceURI=chosenVoice?chosenVoice.voiceURI:null;save();});
+$("voiceSel").addEventListener("change",e=>{chosenVoice=voices[+e.target.value]||null;savedVoiceURI=chosenVoice?chosenVoice.voiceURI:null;save();speak("Hello, testing one two three.",null);});
 $("rate").addEventListener("input",e=>{curRate=+e.target.value;$("rateVal").textContent=curRate.toFixed(2)+"x";});
 $("resetBtn").onclick=()=>{if(confirm("외움 표시와 학습 기록을 모두 초기화할까요?")){known.clear();days.clear();log={};last=null;savedVoiceURI=null;save();closeSheet();go("home");}};
 $("search").addEventListener("input",e=>{query=e.target.value.trim();renderList();});
@@ -340,3 +350,6 @@ document.addEventListener("click",e=>{
 });
 // 초기 lang 토글 활성 상태 동기화
 document.querySelectorAll("[data-lang]").forEach(x=>x.classList.toggle("active",x.dataset.lang===lang));
+
+// 음성 테스트 버튼
+(function(){const b=$("voiceTest");if(b)b.onclick=()=>speak("Hello. This is a pronunciation test. One, two, three.",b);})();
