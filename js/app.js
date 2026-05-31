@@ -1,12 +1,12 @@
 /* ============ 상태 & 저장 ============ */
 const KEY="aiTerms_v2";
-let DB={known:[],days:[],log:{},goal:20,last:null};
+let DB={known:[],days:[],log:{},goal:20,last:null,voiceURI:null};
 try{const s=localStorage.getItem(KEY); if(s)DB=Object.assign(DB,JSON.parse(s));}catch(e){}
 let known=new Set(DB.known||[]);
 let days=new Set(DB.days||[]);
 let log=DB.log||{};
 let goal=DB.goal||20;
-function save(){try{localStorage.setItem(KEY,JSON.stringify({known:[...known],days:[...days],log,goal,last}));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({known:[...known],days:[...days],log,goal,last,voiceURI:savedVoiceURI}));}catch(e){}}
 
 const $=id=>document.getElementById(id);
 const $$=(s,el=document)=>Array.from(el.querySelectorAll(s));
@@ -29,9 +29,9 @@ function animateView(root){if(!root)return;root.querySelectorAll(".ring-fg").for
 let voices=[],chosenVoice=null,curRate=1.0,activeBtn=null;
 const sayText=en=>en.replace(/\s*\(.*?\)\s*/g,' ').replace(/\//g,' ').trim();
 function loadVoices(){
-  const BAD=/albert|bad ?news|bahh|bells|boing|bubbles|cellos|good ?news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|princess|fred|junior|kathy|ralph|espeak|novelty|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|google[ _]?us[ _]?english[ _]?\d|chrome ?os/i;
-  // Apple Safari/iOS·macOS에 기본 탑재되어 발음 완성도가 높은 음성 (Siri 포함)
-  const SAFARI=/\b(samantha|alex|karen|daniel|moira|tessa|veena|rishi|aaron|allison|susan|fiona|tom|catherine|arthur|martha|nicky|victoria|nora|ava|evan|joelle|nathan|noelle|zoe|serena|kate|oliver|isha|siri)\b/i;
+  const BAD=/albert|bad ?news|bahh|bells|boing|bubbles|cellos|good ?news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|princess|fred|junior|kathy|ralph|espeak|novelty|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|rishi|google[ _]?us[ _]?english[ _]?\d|chrome ?os/i;
+  const SAFARI=/\b(samantha|alex|karen|daniel|moira|tessa|veena|aaron|allison|susan|fiona|tom|catherine|arthur|martha|nicky|victoria|nora|ava|evan|joelle|nathan|noelle|zoe|serena|kate|oliver|isha|siri)\b/i;
+  const RECPRI=[/^samantha/i,/^ava/i,/^alex/i,/^daniel/i,/^karen/i,/^tom/i,/^victoria/i,/aria.*natural/i,/jenny.*natural/i];
   const isSafari=v=>SAFARI.test(v.name);
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
   const all=(window.speechSynthesis?speechSynthesis.getVoices():[]);
@@ -42,9 +42,28 @@ function loadVoices(){
   voices=v;
   const sel=$("voiceSel"); if(!sel)return; sel.innerHTML="";
   if(!voices.length){sel.innerHTML="<option>음성 없음</option>";return;}
-  voices.sort((a,b)=>{const sA=isSafari(a)?0:1,sB=isSafari(b)?0:1;if(sA!==sB)return sA-sB;const sc=x=>(/natural|online|google|premium|enhanced/i.test(x.name)?0:1);return sc(a)-sc(b);});
-  voices.forEach((vx,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(isSafari(vx)?"✓ Safari · ":"")+vx.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦")+" · "+vx.lang;sel.appendChild(o);});
-  chosenVoice=(prev&&voices.includes(prev))?prev:voices[0];
+  // 추천 음성 선정(우선순위 매칭)
+  let rec=null;
+  for(const p of RECPRI){rec=voices.find(x=>p.test(x.name));if(rec)break;}
+  if(!rec)rec=voices.find(isSafari)||voices[0];
+  const isRec=x=>x===rec;
+  // 정렬: 추천 > Safari > 기타
+  voices.sort((a,b)=>{
+    const rA=isRec(a)?0:1,rB=isRec(b)?0:1; if(rA!==rB)return rA-rB;
+    const sA=isSafari(a)?0:1,sB=isSafari(b)?0:1; if(sA!==sB)return sA-sB;
+    const sc=x=>(/natural|online|premium|enhanced/i.test(x.name)?0:1);
+    return sc(a)-sc(b);
+  });
+  // 라벨: 짧게 (이름만, 앞에 ★ 또는 ✓)
+  voices.forEach((vx,i)=>{
+    const o=document.createElement("option"); o.value=i;
+    const pre=isRec(vx)?"★ ":(isSafari(vx)?"✓ ":"");
+    o.textContent=pre+vx.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦");
+    sel.appendChild(o);
+  });
+  // 우선순위: 저장된 선택 > 이전 선택 > 추천
+  const saved=savedVoiceURI&&voices.find(x=>x.voiceURI===savedVoiceURI);
+  chosenVoice=saved||(prev&&voices.includes(prev)?prev:rec);
   sel.value=voices.indexOf(chosenVoice);
 }
 try{if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}}catch(e){}
@@ -54,7 +73,7 @@ function speak(text,btn,retry){
   if(activeBtn)activeBtn.classList.remove("playing");
   const u=new SpeechSynthesisUtterance(sayText(text));
   u.lang=chosenVoice?chosenVoice.lang:"en-US"; if(chosenVoice)u.voice=chosenVoice;
-  u.rate=curRate; u.pitch=1.0;
+  u.rate=curRate*0.85; u.pitch=1.0;
   if(btn){btn.classList.add("playing");activeBtn=btn;}
   u.onend=()=>{if(btn)btn.classList.remove("playing");};
   u.onerror=()=>{if(btn)btn.classList.remove("playing");
@@ -190,7 +209,7 @@ function renderStats(){
 }
 
 /* ============ 세션 & 러너 ============ */
-let sess=null;let last=DB.last||null;
+let sess=null;let last=DB.last||null;let savedVoiceURI=DB.voiceURI||null;
 function openRunner(){$("runner").classList.add("on");document.body.style.overflow="hidden";}
 function closeRunner(){$("runner").classList.remove("on");document.body.style.overflow="";try{speechSynthesis.cancel();}catch(e){}renderHome();}
 function startSession(mode,scope){
@@ -285,9 +304,9 @@ document.addEventListener("click",e=>{
 $$(".tab").forEach(b=>b.onclick=()=>go(b.dataset.v));
 $("gearBtn").onclick=openSheet;
 $("backdrop").onclick=closeSheet;
-$("voiceSel").addEventListener("change",e=>{chosenVoice=voices[+e.target.value]||null;});
+$("voiceSel").addEventListener("change",e=>{chosenVoice=voices[+e.target.value]||null;savedVoiceURI=chosenVoice?chosenVoice.voiceURI:null;save();});
 $("rate").addEventListener("input",e=>{curRate=+e.target.value;$("rateVal").textContent=curRate.toFixed(2)+"x";});
-$("resetBtn").onclick=()=>{if(confirm("외움 표시와 학습 기록을 모두 초기화할까요?")){known.clear();days.clear();log={};last=null;save();closeSheet();go("home");}};
+$("resetBtn").onclick=()=>{if(confirm("외움 표시와 학습 기록을 모두 초기화할까요?")){known.clear();days.clear();log={};last=null;savedVoiceURI=null;save();closeSheet();go("home");}};
 $("search").addEventListener("input",e=>{query=e.target.value.trim();renderList();});
 
 /* ============ 시작 ============ */
