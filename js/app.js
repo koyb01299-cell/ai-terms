@@ -73,12 +73,19 @@ function speak(text,btn){
   if(!window.speechSynthesis)return;
   speechSynthesis.cancel();
   if(activeBtn)activeBtn.classList.remove("playing");
-  const u=new SpeechSynthesisUtterance(sayText(text));
-  u.lang=chosenVoice?chosenVoice.lang:"en-US"; if(chosenVoice)u.voice=chosenVoice;
-  u.rate=curRate*0.85; u.pitch=1.0;
   if(btn){btn.classList.add("playing");activeBtn=btn;}
-  u.onend=u.onerror=()=>{if(btn)btn.classList.remove("playing");};
-  speechSynthesis.speak(u);
+  // 자연스러운 호흡을 위해 구두점 단위로 쪼개서 별개 발화로 큐에 올림
+  const parts=(sayText(text).match(/[^,.;:!?\u2014\u2013]+[,.;:!?\u2014\u2013]?/g)||[sayText(text)])
+    .map(s=>s.trim()).filter(s=>s.length);
+  parts.forEach((chunk,idx)=>{
+    const u=new SpeechSynthesisUtterance(chunk);
+    u.lang=chosenVoice?chosenVoice.lang:"en-US"; if(chosenVoice)u.voice=chosenVoice;
+    u.rate=curRate*0.85; u.pitch=1.0;
+    if(idx===parts.length-1){
+      u.onend=u.onerror=()=>{if(btn)btn.classList.remove("playing");};
+    }
+    speechSynthesis.speak(u);
+  });
 }
 
 /* ============ 네비게이션 ============ */
