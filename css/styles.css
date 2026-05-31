@@ -144,7 +144,7 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix
 .rn-tag{position:absolute;top:18px;left:20px;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--gold);}
 .rn-ko{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(34px,9vw,52px);line-height:1.12;}
 .rn-en{font-family:"Fraunces",serif;font-style:italic;font-size:clamp(24px,6.5vw,34px);color:#f0c98a;margin-bottom:16px;}
-.rn-desc{font-size:15px;color:#e8ddc8;max-width:440px;line-height:1.6;}
+.rn-desc{font-size:clamp(16px,4.4vw,19px);color:#f0e6d1;max-width:480px;line-height:1.65;font-weight:400;letter-spacing:.005em;text-align:center;}
 .rn-hint{position:absolute;bottom:18px;left:0;right:0;font-family:"JetBrains Mono",monospace;font-size:10.5px;letter-spacing:.18em;text-transform:uppercase;opacity:.4;}
 .rn-actions{display:flex;gap:10px;margin-bottom:12px;}
 .rn-know{flex:1;padding:13px;border:1.5px dashed var(--line);background:var(--card);border-radius:12px;font-family:"IBM Plex Sans KR";font-size:14px;font-weight:700;color:var(--ink-soft);cursor:pointer;}

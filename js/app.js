@@ -236,7 +236,7 @@ function renderFlash(){
   const k=known.has(idx);
   $("runner").innerHTML=rnBar()
     +'<div class="rn-body"><div class="rn-card" id="rnCard"><div class="rn-face rn-front"><div class="rn-tag">No.'+String(idx+1).padStart(2,"0")+'</div><div class="rn-ko">'+prim(t)+'</div><div class="rn-hint">'+(lang==="en"?"Tap to reveal":"탭하면 정답")+'</div></div>'
-    +'<div class="rn-face rn-back"><div class="rn-en">'+sec(t)+'</div><div class="rn-desc">'+t[2]+'</div><div class="rn-hint">'+(lang==="en"?"Tap to flip":"탭하면 단어")+'</div></div></div></div>'
+    +'<div class="rn-face rn-back"><div class="rn-desc">'+t[2]+'</div><div class="rn-hint">'+(lang==="en"?"Tap to go back":"탭하면 돌아가기")+'</div></div></div></div>'
     +'<div class="rn-foot"><div class="rn-actions"><button class="rn-know '+(k?"on":"")+'" id="rnKnow">'+(k?"✓ 외움":"외우기")+'</button><button class="rn-speak" id="rnSpeak">'+SPK+' 발음</button></div>'
     +'<div class="rn-nav"><button class="rn-btn" id="rnPrev" '+(sess.pos===0?"disabled":"")+'>← 이전</button><button class="rn-btn primary" id="rnNext">'+(sess.pos===n-1?"완료":"다음 →")+'</button></div></div>';
   const card=$("rnCard");
