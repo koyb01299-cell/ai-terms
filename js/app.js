@@ -178,10 +178,10 @@ function renderList(){
   items.forEach(({t,i})=>{
     if(t[3]!==last&&activeCat==="all"&&!query){h+='<div class="cat-head">'+CATS[t[3]]+'<span></span></div>';last=t[3];}
     const k=known.has(i);
-    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+(isAdded(t)?'<span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</div><div class="entry"><div class="term-line"><span class="ko">'+t[0]+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+t[1]+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button></div></article>';
+    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+(isAdded(t)?'<span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</div><div class="entry"><div class="term-line"><span class="ko">'+t[0]+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+t[1]+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button><details class="ex"><summary>💼 비즈니스 예문</summary><div class="ex-row them"><span class="ex-tag">상대</span><p class="ex-en">'+esc(EXAMPLES[i][0])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][1])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][0])+'" aria-label="발음">'+SPK+'</button></div><div class="ex-row you"><span class="ex-tag">나</span><p class="ex-en">'+esc(EXAMPLES[i][2])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][3])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][2])+'" aria-label="발음">'+SPK+'</button></div></details></div></article>';
   });
   $("list").innerHTML=h;
-  $$(".speak-btn",$("list")).forEach(b=>b.onclick=()=>speak(b.dataset.say,b));
+  $$(".speak-btn,.ex-spk",$("list")).forEach(b=>b.onclick=(e)=>{e.stopPropagation();speak(b.dataset.say,b);});
   $$(".know-btn",$("list")).forEach(b=>b.onclick=function(){const c=this.closest(".card"),i=+c.dataset.i;
     if(known.has(i))known.delete(i);else known.add(i);save();c.classList.toggle("known");this.textContent=known.has(i)?"✓ 외웠어요":"외웠어요?";});
 }

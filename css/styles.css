@@ -261,3 +261,22 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix
 .hint-text b{color:var(--terra-d);font-weight:700;}
 
 .ext-badge{display:inline-block;margin-left:5px;padding:1px 6px;background:rgba(47,107,91,.14);color:var(--teal);font-family:"JetBrains Mono",monospace;font-size:9.5px;font-weight:700;border-radius:5px;vertical-align:middle;letter-spacing:.04em;line-height:1.4;}
+
+/* ---------- Business examples (per-card) ---------- */
+.ex{margin-top:14px;border-top:1px dashed var(--line);padding-top:10px;}
+.ex summary{cursor:pointer;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--terra-d);font-weight:700;list-style:none;display:flex;align-items:center;gap:8px;padding:6px 0;user-select:none;}
+.ex summary::-webkit-details-marker{display:none;}
+.ex summary::after{content:"▾";margin-left:auto;transition:transform .2s;color:var(--ink-soft);}
+.ex[open] summary::after{transform:rotate(180deg);}
+.ex-row{margin-top:10px;padding:12px 14px;padding-right:54px;background:var(--paper-2);border-radius:10px;position:relative;}
+.ex-row.them{border-left:3px solid var(--teal);}
+.ex-row.you{border-left:3px solid var(--terra);}
+.ex-tag{display:inline-block;font-family:"JetBrains Mono",monospace;font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;margin-bottom:7px;}
+.ex-row.them .ex-tag{color:var(--teal);}
+.ex-row.you .ex-tag{color:var(--terra-d);}
+.ex-en{font-size:14px;font-weight:500;line-height:1.5;color:var(--ink);}
+.ex-ko{font-size:12.5px;color:var(--ink-soft);margin-top:5px;line-height:1.55;}
+.ex-spk{position:absolute;top:11px;right:11px;width:32px;height:32px;border-radius:50%;border:1.5px solid var(--ink);background:var(--paper);color:var(--ink);display:inline-flex;align-items:center;justify-content:center;cursor:pointer;padding:0;transition:.12s;}
+.ex-spk:active{transform:scale(.9);}
+.ex-spk.playing{background:var(--terra);color:#fff;border-color:var(--terra);}
+.ex-spk svg{width:14px;height:14px;}
