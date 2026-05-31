@@ -42,6 +42,16 @@ function loadVoices(){
   let v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name)&&(!isIOS||x.localService===true));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang));
+  // 중복 제거: 같은 이름 음성이 여러 개일 때, 한국어 로케일/저음질 변형 배제하고 가장 자연스러운 하나만 남김
+  const qScore=x=>{const u=(x.voiceURI||"").toLowerCase();
+    if(/[._\-\/]ko[._\-\/]|korean|ko-kr|ko_kr/i.test(u))return 99;
+    if(/premium|enhanced|siri|neural|natural/i.test(u))return 0;
+    if(/compact/i.test(u))return 2;
+    return 1;};
+  const dedup=new Map();
+  for(const x of v){const k=x.name.toLowerCase();const cur=dedup.get(k);
+    if(!cur||qScore(x)<qScore(cur))dedup.set(k,x);}
+  v=Array.from(dedup.values());
   const prev=chosenVoice;
   voices=v;
   const sel=$("voiceSel"); if(!sel)return; sel.innerHTML="";
