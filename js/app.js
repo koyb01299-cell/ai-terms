@@ -30,17 +30,22 @@ let voices=[],chosenVoice=null,curRate=1.0,activeBtn=null;
 const sayText=en=>en.replace(/\s*\(.*?\)\s*/g,' ').replace(/\//g,' ').trim();
 function loadVoices(){
   const BAD=/albert|bad ?news|bahh|bells|boing|bubbles|cellos|good ?news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|princess|fred|junior|kathy|ralph|espeak|novelty|eddy|flo|grandma|grandpa|reed|rocko|sandy|shelley|google[ _]?us[ _]?english[ _]?\d|chrome ?os/i;
+  // Apple Safari/iOS·macOS에 기본 탑재되어 발음 완성도가 높은 음성 (Siri 포함)
+  const SAFARI=/\b(samantha|alex|karen|daniel|moira|tessa|veena|rishi|aaron|allison|susan|fiona|tom|catherine|arthur|martha|nicky|victoria|nora|ava|evan|joelle|nathan|noelle|zoe|serena|kate|oliver|isha|siri)\b/i;
+  const isSafari=v=>SAFARI.test(v.name);
   const isIOS=/iPad|iPhone|iPod/.test(navigator.userAgent)||(navigator.platform==="MacIntel"&&navigator.maxTouchPoints>1);
   const all=(window.speechSynthesis?speechSynthesis.getVoices():[]);
   let v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name)&&(!isIOS||x.localService===true));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang)&&!BAD.test(x.name));
   if(!v.length)v=all.filter(x=>/^en/i.test(x.lang));
+  const prev=chosenVoice;
   voices=v;
   const sel=$("voiceSel"); if(!sel)return; sel.innerHTML="";
   if(!voices.length){sel.innerHTML="<option>음성 없음</option>";return;}
-  voices.sort((a,b)=>{const sc=v=>(/natural|online|google|premium|enhanced|siri/i.test(v.name)?0:1);return sc(a)-sc(b);});
-  voices.forEach((v,i)=>{const o=document.createElement("option");o.value=i;o.textContent=v.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦")+" · "+v.lang;sel.appendChild(o);});
-  chosenVoice=voices[0]; sel.value=0;
+  voices.sort((a,b)=>{const sA=isSafari(a)?0:1,sB=isSafari(b)?0:1;if(sA!==sB)return sA-sB;const sc=x=>(/natural|online|google|premium|enhanced/i.test(x.name)?0:1);return sc(a)-sc(b);});
+  voices.forEach((vx,i)=>{const o=document.createElement("option");o.value=i;o.textContent=(isSafari(vx)?"✓ Safari · ":"")+vx.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦")+" · "+vx.lang;sel.appendChild(o);});
+  chosenVoice=(prev&&voices.includes(prev))?prev:voices[0];
+  sel.value=voices.indexOf(chosenVoice);
 }
 try{if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}}catch(e){}
 function speak(text,btn,retry){
