@@ -67,7 +67,7 @@ function loadVoices(){
   sel.value=voices.indexOf(chosenVoice);
 }
 try{if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}}catch(e){}
-function speak(text,btn,retry){
+function speak(text,btn){
   if(!window.speechSynthesis)return;
   speechSynthesis.cancel();
   if(activeBtn)activeBtn.classList.remove("playing");
@@ -75,15 +75,7 @@ function speak(text,btn,retry){
   u.lang=chosenVoice?chosenVoice.lang:"en-US"; if(chosenVoice)u.voice=chosenVoice;
   u.rate=curRate*0.85; u.pitch=1.0;
   if(btn){btn.classList.add("playing");activeBtn=btn;}
-  u.onend=()=>{if(btn)btn.classList.remove("playing");};
-  u.onerror=()=>{if(btn)btn.classList.remove("playing");
-    if(!retry&&chosenVoice&&voices.length>1){
-      voices=voices.filter(x=>x!==chosenVoice);
-      const sel=$("voiceSel");if(sel){sel.innerHTML="";voices.forEach((vx,i)=>{const o=document.createElement("option");o.value=i;o.textContent=vx.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦")+" · "+vx.lang;sel.appendChild(o);});sel.value=0;}
-      chosenVoice=voices[0]||null;
-      setTimeout(()=>speak(text,btn,true),50);
-    }
-  };
+  u.onend=u.onerror=()=>{if(btn)btn.classList.remove("playing");};
   speechSynthesis.speak(u);
 }
 
