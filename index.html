@@ -1,0 +1,1467 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AI 용어 사전 · 발음 학습</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=IBM+Plex+Sans+KR:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --paper:#f3ede1;
+    --paper-2:#ece4d4;
+    --ink:#211c16;
+    --ink-soft:#5a5145;
+    --line:#d8cdb8;
+    --terra:#bf4b2c;
+    --terra-d:#9c3a1f;
+    --teal:#2f6b5b;
+    --gold:#c08a2d;
+    --card:#fbf7ee;
+    --shadow:rgba(40,30,15,.10);
+  }
+  *{box-sizing:border-box;margin:0;padding:0;}
+  html{scroll-behavior:smooth;}
+  body{
+    font-family:"IBM Plex Sans KR",sans-serif;
+    background:
+      radial-gradient(circle at 12% 8%, #fbf6ea 0%, transparent 45%),
+      radial-gradient(circle at 88% 92%, #efe7d6 0%, transparent 50%),
+      var(--paper);
+    color:var(--ink);
+    line-height:1.6;
+    min-height:100vh;
+    -webkit-tap-highlight-color:transparent;
+    overflow-x:hidden;
+  }
+  body::before{
+    content:"";position:fixed;inset:0;pointer-events:none;z-index:0;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='3'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.035'/%3E%3C/svg%3E");
+    mix-blend-mode:multiply;
+  }
+  .wrap{position:relative;z-index:1;max-width:760px;margin:0 auto;padding:0 16px calc(96px + env(safe-area-inset-bottom));}
+
+  /* ---------- Header ---------- */
+  header{padding:22px 0 14px;border-bottom:2px solid var(--ink);position:relative;}
+  .eyebrow{font-family:"JetBrains Mono",monospace;font-size:9.5px;letter-spacing:.26em;text-transform:uppercase;color:var(--terra-d);font-weight:500;}
+  h1{font-family:"Fraunces",serif;font-weight:600;font-size:clamp(25px,6.4vw,40px);line-height:1.02;letter-spacing:-.015em;margin:6px 0 5px;}
+  h1 em{font-style:italic;color:var(--terra);}
+  .subtitle{font-size:13.5px;color:var(--ink-soft);max-width:480px;margin-top:6px;}
+  .meta-row{display:flex;flex-wrap:wrap;gap:5px 16px;margin-top:10px;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);}
+  .meta-row b{color:var(--ink);font-weight:700;}
+
+  /* ---------- Controls (sticky) ---------- */
+  .controls{position:sticky;top:0;z-index:30;background:linear-gradient(var(--paper) 80%,transparent);padding:12px 0 12px;margin-top:4px;}
+  .toolbar{display:flex;gap:9px;align-items:stretch;width:100%;}
+  .search{flex:1 1 auto;min-width:0;display:flex;align-items:center;gap:9px;background:var(--card);border:1.5px solid var(--line);border-radius:13px;padding:12px 15px;}
+  .search:focus-within{border-color:var(--terra);}
+  .search input{border:none;background:none;outline:none;flex:1;font-family:inherit;font-size:16px;color:var(--ink);min-width:0;}
+  .search svg{flex:none;}
+  .gear{flex:0 0 50px;width:50px;height:50px;border:1.5px solid var(--line);background:var(--card);border-radius:13px;cursor:pointer;color:var(--ink-soft);display:flex;align-items:center;justify-content:center;}
+  .gear:active{background:var(--paper-2);}
+  .gear svg{display:block;}
+
+  /* progress */
+  .progress{margin-top:11px;}
+  .progress .bar{height:8px;background:var(--paper-2);border:1px solid var(--line);border-radius:20px;overflow:hidden;}
+  .progress .fill{height:100%;background:linear-gradient(90deg,var(--teal),var(--gold));width:0%;transition:width .4s ease;}
+  .progress .label{display:flex;justify-content:space-between;font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--ink-soft);margin-top:6px;}
+
+  /* ---------- Settings bottom sheet ---------- */
+  .sheet-backdrop{position:fixed;inset:0;background:rgba(33,28,22,.45);z-index:90;opacity:0;visibility:hidden;transition:.25s;}
+  .sheet-backdrop.open{opacity:1;visibility:visible;}
+  .sheet{position:fixed;left:0;right:0;bottom:0;z-index:100;background:var(--card);border-top:2px solid var(--ink);border-radius:22px 22px 0 0;padding:8px 22px calc(28px + env(safe-area-inset-bottom));transform:translateY(110%);transition:transform .3s cubic-bezier(.4,0,.2,1);box-shadow:0 -8px 34px rgba(40,30,15,.2);max-width:760px;margin:0 auto;}
+  .sheet.open{transform:translateY(0);}
+  .sheet .grip{width:44px;height:5px;background:var(--line);border-radius:5px;margin:8px auto 18px;}
+  .sheet h3{font-family:"Fraunces",serif;font-style:italic;font-size:21px;color:var(--teal);margin-bottom:18px;}
+  .field{margin-bottom:20px;}
+  .field>label{display:block;font-family:"JetBrains Mono",monospace;font-size:12px;color:var(--ink-soft);margin-bottom:9px;letter-spacing:.04em;}
+  .field select{width:100%;font-family:inherit;font-size:15px;padding:13px;border:1.5px solid var(--line);background:var(--paper);border-radius:11px;color:var(--ink);}
+  .rate-wrap{display:flex;align-items:center;gap:14px;}
+  .rate-wrap input{accent-color:var(--terra);flex:1;height:28px;}
+  .rate-wrap b{font-family:"JetBrains Mono",monospace;font-size:14px;min-width:56px;text-align:right;}
+  .reset{width:100%;padding:14px;border:1.5px solid var(--terra);background:none;color:var(--terra-d);cursor:pointer;font-family:inherit;font-size:14px;border-radius:11px;font-weight:600;}
+  .reset:active{background:var(--terra);color:#fff;}
+
+  /* ---------- Bottom tab nav ---------- */
+  .bottomnav{position:fixed;left:0;right:0;bottom:0;z-index:80;display:flex;background:var(--card);border-top:2px solid var(--ink);padding-bottom:env(safe-area-inset-bottom);box-shadow:0 -4px 22px rgba(40,30,15,.12);}
+  .bottomnav button{flex:1;border:none;background:none;padding:11px 0 10px;cursor:pointer;display:flex;flex-direction:column;align-items:center;gap:3px;color:var(--ink-soft);font-family:"IBM Plex Sans KR",sans-serif;font-size:12px;font-weight:600;transition:color .15s;}
+  .bottomnav button .ic{display:flex;align-items:center;justify-content:center;line-height:1;}
+  .bottomnav button.on{color:var(--terra);}
+
+  /* ---------- Category chips ---------- */
+  .chips{display:flex;gap:7px;overflow-x:auto;padding:14px 0 6px;scrollbar-width:none;}
+  .chips::-webkit-scrollbar{display:none;}
+  .chip{flex:none;font-size:13px;padding:7px 13px;border:1.5px solid var(--line);background:var(--card);border-radius:30px;cursor:pointer;white-space:nowrap;color:var(--ink-soft);transition:.15s;font-weight:500;}
+  .chip:hover{border-color:var(--terra);}
+  .chip.on{background:var(--terra);color:#fff;border-color:var(--terra);}
+  .chip .c{font-family:"JetBrains Mono",monospace;opacity:.7;margin-left:5px;font-size:11px;}
+
+  /* ---------- List cards ---------- */
+  .cat-head{font-family:"Fraunces",serif;font-style:italic;font-size:22px;margin:34px 0 14px;display:flex;align-items:baseline;gap:12px;color:var(--teal);}
+  .cat-head span{flex:none;height:1px;background:var(--line);flex:1;}
+  .card{background:var(--card);border:1.5px solid var(--line);border-left:4px solid var(--terra);border-radius:14px;padding:16px 17px;margin-bottom:12px;box-shadow:0 2px 0 var(--shadow);position:relative;transition:.18s;}
+  .card:hover{transform:translateX(2px);box-shadow:0 4px 14px var(--shadow);}
+  .card.known{border-left-color:var(--teal);opacity:.96;}
+  .card.known::after{content:"외움 ✓";position:absolute;top:14px;right:16px;font-family:"JetBrains Mono",monospace;font-size:10px;color:var(--teal);letter-spacing:.1em;}
+  .card .num{font-family:"JetBrains Mono",monospace;font-size:11px;color:var(--gold);font-weight:700;}
+  .term-line{display:flex;align-items:center;gap:11px;flex-wrap:wrap;margin:2px 0 4px;}
+  .ko{font-size:21px;font-weight:700;letter-spacing:-.01em;}
+  .en{font-family:"Fraunces",serif;font-style:italic;font-size:16px;color:var(--terra-d);}
+  .desc{font-size:14.5px;color:var(--ink-soft);line-height:1.62;}
+  .card-actions{display:flex;gap:9px;margin-top:14px;}
+  .speak-btn{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-family:"IBM Plex Sans KR",sans-serif;font-size:14px;border:none;background:var(--ink);color:var(--paper);padding:12px 14px;border-radius:11px;cursor:pointer;font-weight:600;transition:transform .1s,background .15s;}
+  .speak-btn:active{transform:scale(.97);}
+  .speak-btn.playing{background:var(--terra);color:#fff;}
+  .know-btn{flex:1;font-family:"IBM Plex Sans KR",sans-serif;font-size:14px;border:1.5px solid var(--line);background:var(--paper);color:var(--ink-soft);padding:12px 14px;border-radius:11px;cursor:pointer;font-weight:600;transition:transform .1s;}
+  .know-btn:active{transform:scale(.97);}
+  .card.known .know-btn{border-color:var(--teal);color:var(--teal);background:rgba(47,107,91,.08);}
+
+  .empty{text-align:center;padding:60px 20px;color:var(--ink-soft);font-style:italic;font-family:"Fraunces",serif;font-size:18px;}
+
+  /* ---------- Flashcard ---------- */
+  #flash{display:none;}
+  .flash-stage{perspective:1400px;margin:22px 0 18px;}
+  .flash{position:relative;width:100%;min-height:clamp(300px,54vh,420px);cursor:pointer;transform-style:preserve-3d;transition:transform .5s cubic-bezier(.5,.1,.2,1);}
+  .flash.flipped{transform:rotateY(180deg);}
+  .face{position:absolute;inset:0;backface-visibility:hidden;border:2px solid var(--ink);border-radius:18px;padding:30px 24px;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;box-shadow:5px 6px 0 var(--ink);}
+  .face.front{background:var(--card);}
+  .face.back{background:var(--ink);color:var(--paper);transform:rotateY(180deg);}
+  .face .num{position:absolute;top:16px;left:18px;}
+  .face.front .ko{font-size:clamp(30px,8vw,46px);line-height:1.1;}
+  .face .hint{position:absolute;bottom:18px;font-family:"JetBrains Mono",monospace;font-size:11px;letter-spacing:.18em;text-transform:uppercase;opacity:.5;}
+  .face.back .en{font-family:"Fraunces",serif;font-style:italic;font-size:clamp(24px,6vw,34px);color:#f0c98a;margin-bottom:14px;}
+  .face.back .desc{font-size:15px;color:#e8ddc8;max-width:440px;}
+  .face.back .ko-sm{font-size:18px;font-weight:600;color:var(--paper);margin-bottom:6px;}
+  .flash-speak{margin-top:18px;}
+  .flash-nav{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:6px;}
+  .nav-btn{font-family:"IBM Plex Sans KR",sans-serif;font-size:14px;font-weight:600;padding:13px 20px;border:1.5px solid var(--ink);background:var(--card);border-radius:12px;cursor:pointer;color:var(--ink);}
+  .nav-btn:active{background:var(--ink);color:var(--paper);}
+  .nav-btn:disabled{opacity:.35;cursor:not-allowed;}
+  .flash-count{font-family:"JetBrains Mono",monospace;font-size:14px;font-weight:700;}
+  .flash-tools{display:flex;justify-content:center;gap:9px;margin-top:14px;flex-wrap:wrap;}
+  .flash-tools button{display:inline-flex;align-items:center;gap:6px;font-family:"IBM Plex Sans KR",sans-serif;font-size:13px;font-weight:600;padding:11px 15px;border:1.5px solid var(--line);background:var(--card);border-radius:11px;cursor:pointer;color:var(--ink-soft);}
+  .flash-tools button:active{border-color:var(--terra);color:var(--terra);}
+  #flashSpeak{background:var(--ink);color:var(--paper);border-color:var(--ink);}
+
+  footer{text-align:center;margin-top:40px;padding-top:20px;border-top:1px solid var(--line);font-size:12px;color:var(--ink-soft);font-family:"JetBrains Mono",monospace;}
+
+  @media(hover:none){ .card:hover{transform:none;box-shadow:0 2px 0 var(--shadow);} }
+  @media(max-width:560px){
+    .ko{font-size:20px;}
+    .en{font-size:15px;}
+    .cat-head{font-size:19px;margin:26px 0 12px;}
+    .face{padding:26px 18px;}
+  }
+</style>
+</head>
+<body>
+<noscript>
+  <div style="background:#2f6b5b;color:#fff;padding:14px 18px;font-family:sans-serif;font-size:14px;line-height:1.65;text-align:center;">
+    📖 지금은 미리보기 모드라 <b>단어·뜻은 그대로 읽을 수 있어요.</b><br>
+    🔊 발음 듣기·플래시카드를 쓰려면 <b>Safari·Chrome 같은 브라우저</b>로 열어주세요.
+  </div>
+</noscript>
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">AI Business · Glossary</div>
+    <h1>AI 핵심 용어<br><em>발음 사전</em></h1>
+    <div class="meta-row">
+      <span>총 <b id="totalCount">97</b>개 용어</span>
+      <span><b id="catCount">12</b>개 분류</span>
+    </div>
+  </header>
+
+  <div class="controls">
+    <div class="toolbar">
+      <label class="search">
+        <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="#5a5145" stroke-width="2"><circle cx="11" cy="11" r="7"/><path d="m21 21-4.3-4.3"/></svg>
+        <input id="search" type="text" placeholder="용어 검색…">
+      </label>
+      <button class="gear" id="gearBtn" aria-label="설정"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 1 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 1 1-2.83-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 1 1 2.83-2.83l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 1 1 2.83 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg></button>
+    </div>
+
+    <div class="progress">
+      <div class="bar"><div class="fill" id="fill"></div></div>
+      <div class="label"><span><b id="knownCount">0</b> / <span id="totalCount2">97</span> 외움</span><span id="pctLabel">0%</span></div>
+    </div>
+
+    <div class="chips" id="chips"></div>
+  </div>
+
+  <!-- LIST VIEW (앱 미실행 시에도 단어가 보이도록 정적 렌더, JS 로드되면 대체됨) -->
+  <main id="list">
+        <div class="cat-head">기초 개념<span></span></div>
+        <div class="card" data-i="0">
+          <div class="num">No.01</div>
+          <div class="term-line"><span class="ko">인공지능</span> <span class="en">Artificial Intelligence (AI)</span></div>
+          <div class="desc">사람처럼 생각하고 배우고 문제를 해결하는 컴퓨터 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Artificial Intelligence (AI)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="1">
+          <div class="num">No.02</div>
+          <div class="term-line"><span class="ko">머신러닝</span> <span class="en">Machine Learning</span></div>
+          <div class="desc">AI의 한 분야로, 컴퓨터가 데이터를 통해 스스로 학습하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Machine Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="2">
+          <div class="num">No.03</div>
+          <div class="term-line"><span class="ko">딥러닝</span> <span class="en">Deep Learning</span></div>
+          <div class="desc">머신러닝의 한 종류로, 인공 신경망을 사용해 더 복잡한 문제를 해결.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Deep Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="3">
+          <div class="num">No.04</div>
+          <div class="term-line"><span class="ko">알고리즘</span> <span class="en">Algorithm</span></div>
+          <div class="desc">문제를 해결하기 위한 단계별 절차나 방법. AI의 핵심.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Algorithm"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="4">
+          <div class="num">No.05</div>
+          <div class="term-line"><span class="ko">데이터</span> <span class="en">Data</span></div>
+          <div class="desc">AI가 학습하고 분석하는 데 사용하는 정보. 텍스트·이미지·소리 등.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Data"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="5">
+          <div class="num">No.06</div>
+          <div class="term-line"><span class="ko">빅데이터</span> <span class="en">Big Data</span></div>
+          <div class="desc">엄청나게 큰 규모의 데이터. AI는 이를 활용해 학습한다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Big Data"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="6">
+          <div class="num">No.07</div>
+          <div class="term-line"><span class="ko">트레이닝</span> <span class="en">Training</span></div>
+          <div class="desc">AI 모델이 데이터를 통해 학습하는 과정. 일종의 공부.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Training"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="7">
+          <div class="num">No.08</div>
+          <div class="term-line"><span class="ko">모델</span> <span class="en">Model</span></div>
+          <div class="desc">AI가 학습한 결과를 나타내는 것. 쉽게 말해 AI의 지식 창고.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Model"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="8">
+          <div class="num">No.09</div>
+          <div class="term-line"><span class="ko">피처 (특징)</span> <span class="en">Feature</span></div>
+          <div class="desc">데이터에서 AI가 학습하는 중요한 요소. (예: 고양이 인식의 수염·귀)</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Feature"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">학습 방식<span></span></div>
+        <div class="card" data-i="9">
+          <div class="num">No.10</div>
+          <div class="term-line"><span class="ko">파라미터 (매개변수)</span> <span class="en">Parameter</span></div>
+          <div class="desc">AI 모델 내부에서 학습되는 값. 모델 성능에 영향을 미친다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Parameter"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="10">
+          <div class="num">No.11</div>
+          <div class="term-line"><span class="ko">지도 학습</span> <span class="en">Supervised Learning</span></div>
+          <div class="desc">정답이 있는 데이터를 통해 학습하는 방식.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Supervised Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="11">
+          <div class="num">No.12</div>
+          <div class="term-line"><span class="ko">비지도 학습</span> <span class="en">Unsupervised Learning</span></div>
+          <div class="desc">정답 없이 데이터 자체의 패턴을 학습하는 방식.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Unsupervised Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">신경망 구조<span></span></div>
+        <div class="card" data-i="12">
+          <div class="num">No.13</div>
+          <div class="term-line"><span class="ko">신경망</span> <span class="en">Neural Network</span></div>
+          <div class="desc">AI의 핵심 구조로 인간의 뇌 신경망을 모방했다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Neural Network"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="13">
+          <div class="num">No.14</div>
+          <div class="term-line"><span class="ko">심층 신경망</span> <span class="en">Deep Neural Network</span></div>
+          <div class="desc">여러 층으로 구성된 신경망으로 딥러닝에 사용된다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Deep Neural Network"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="14">
+          <div class="num">No.15</div>
+          <div class="term-line"><span class="ko">노드 (뉴런)</span> <span class="en">Node / Neuron</span></div>
+          <div class="desc">신경망의 기본 구성 요소로 정보를 처리한다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Node / Neuron"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="15">
+          <div class="num">No.16</div>
+          <div class="term-line"><span class="ko">레이어 (층)</span> <span class="en">Layer</span></div>
+          <div class="desc">신경망 내에서 노드들이 모여 있는 층.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Layer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="16">
+          <div class="num">No.17</div>
+          <div class="term-line"><span class="ko">활성화 함수</span> <span class="en">Activation Function</span></div>
+          <div class="desc">노드의 출력을 결정하는 함수.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Activation Function"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="17">
+          <div class="num">No.18</div>
+          <div class="term-line"><span class="ko">가중치</span> <span class="en">Weight</span></div>
+          <div class="desc">신경망 연결의 강도를 나타내는 값. 학습을 통해 조정된다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Weight"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="18">
+          <div class="num">No.19</div>
+          <div class="term-line"><span class="ko">편향</span> <span class="en">Bias</span></div>
+          <div class="desc">신경망의 학습을 돕는 값.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Bias"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">모델 훈련<span></span></div>
+        <div class="card" data-i="19">
+          <div class="num">No.20</div>
+          <div class="term-line"><span class="ko">에포크</span> <span class="en">Epoch</span></div>
+          <div class="desc">전체 데이터를 한 번 학습하는 단위.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Epoch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="20">
+          <div class="num">No.21</div>
+          <div class="term-line"><span class="ko">배치 사이즈</span> <span class="en">Batch Size</span></div>
+          <div class="desc">한 번의 학습에 사용되는 데이터의 양.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Batch Size"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="21">
+          <div class="num">No.22</div>
+          <div class="term-line"><span class="ko">이터레이션 (반복)</span> <span class="en">Iteration</span></div>
+          <div class="desc">한 번의 에포크 내에서 학습이 반복되는 횟수.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Iteration"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="22">
+          <div class="num">No.23</div>
+          <div class="term-line"><span class="ko">손실 함수</span> <span class="en">Loss Function</span></div>
+          <div class="desc">모델의 예측과 실제 값의 차이를 측정하는 함수.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Loss Function"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="23">
+          <div class="num">No.24</div>
+          <div class="term-line"><span class="ko">옵티마이저 (최적화)</span> <span class="en">Optimizer</span></div>
+          <div class="desc">손실을 최소화하기 위해 모델을 튜닝하는 알고리즘.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Optimizer"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="24">
+          <div class="num">No.25</div>
+          <div class="term-line"><span class="ko">경사 하강법</span> <span class="en">Gradient Descent</span></div>
+          <div class="desc">옵티마이저가 사용하는 방법 중 하나.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Gradient Descent"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="25">
+          <div class="num">No.26</div>
+          <div class="term-line"><span class="ko">학습률</span> <span class="en">Learning Rate</span></div>
+          <div class="desc">모델 학습 속도를 조절하는 값.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Learning Rate"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="26">
+          <div class="num">No.27</div>
+          <div class="term-line"><span class="ko">과적합</span> <span class="en">Overfitting</span></div>
+          <div class="desc">훈련 데이터에 너무 맞춰져 새로운 데이터 예측 능력이 떨어지는 현상.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Overfitting"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="27">
+          <div class="num">No.28</div>
+          <div class="term-line"><span class="ko">과소적합</span> <span class="en">Underfitting</span></div>
+          <div class="desc">모델이 훈련 데이터조차 제대로 학습하지 못하는 현상.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Underfitting"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">성능 평가<span></span></div>
+        <div class="card" data-i="28">
+          <div class="num">No.29</div>
+          <div class="term-line"><span class="ko">검증 세트</span> <span class="en">Validation Set</span></div>
+          <div class="desc">학습 중 모델의 성능을 평가하기 위해 사용되는 데이터 세트.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Validation Set"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="29">
+          <div class="num">No.30</div>
+          <div class="term-line"><span class="ko">테스트 세트</span> <span class="en">Test Set</span></div>
+          <div class="desc">최종 모델의 성능을 평가하기 위해 사용되는 데이터 세트.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Test Set"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="30">
+          <div class="num">No.31</div>
+          <div class="term-line"><span class="ko">정확도</span> <span class="en">Accuracy</span></div>
+          <div class="desc">모델의 예측이 얼마나 정확한지를 나타내는 지표.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Accuracy"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="31">
+          <div class="num">No.32</div>
+          <div class="term-line"><span class="ko">정밀도</span> <span class="en">Precision</span></div>
+          <div class="desc">모델이 긍정으로 예측한 것 중 실제로 긍정인 비율.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Precision"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="32">
+          <div class="num">No.33</div>
+          <div class="term-line"><span class="ko">재현율</span> <span class="en">Recall</span></div>
+          <div class="desc">실제 긍정인 것 중 모델이 긍정으로 예측한 비율.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Recall"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="33">
+          <div class="num">No.34</div>
+          <div class="term-line"><span class="ko">F1 점수</span> <span class="en">F1 Score</span></div>
+          <div class="desc">정밀도와 재현율의 조화 평균.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="F1 Score"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="34">
+          <div class="num">No.35</div>
+          <div class="term-line"><span class="ko">혼동 행렬</span> <span class="en">Confusion Matrix</span></div>
+          <div class="desc">모델의 예측 결과를 시각적으로 보여주는 표.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Confusion Matrix"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="35">
+          <div class="num">No.36</div>
+          <div class="term-line"><span class="ko">ROC 곡선</span> <span class="en">ROC Curve</span></div>
+          <div class="desc">모델의 성능을 시각적으로 평가하는 도구.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="ROC Curve"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="36">
+          <div class="num">No.37</div>
+          <div class="term-line"><span class="ko">AUC</span> <span class="en">Area Under the Curve</span></div>
+          <div class="desc">ROC 곡선 아래의 면적을 의미하며 모델 성능을 나타낸다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Area Under the Curve"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="37">
+          <div class="num">No.38</div>
+          <div class="term-line"><span class="ko">편향-분산 트레이드오프</span> <span class="en">Bias-Variance Tradeoff</span></div>
+          <div class="desc">모델의 편향과 분산 사이의 관계를 나타낸다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Bias-Variance Tradeoff"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">데이터 전처리<span></span></div>
+        <div class="card" data-i="38">
+          <div class="num">No.39</div>
+          <div class="term-line"><span class="ko">데이터 전처리</span> <span class="en">Data Preprocessing</span></div>
+          <div class="desc">데이터를 학습에 적합한 형태로 변환하는 과정.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Data Preprocessing"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="39">
+          <div class="num">No.40</div>
+          <div class="term-line"><span class="ko">데이터 정제</span> <span class="en">Data Cleaning</span></div>
+          <div class="desc">결측치·이상치 등을 처리하여 데이터를 깨끗하게 만드는 과정.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Data Cleaning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="40">
+          <div class="num">No.41</div>
+          <div class="term-line"><span class="ko">특징 스케일링</span> <span class="en">Feature Scaling</span></div>
+          <div class="desc">특징 값의 범위를 조정하여 학습 효율을 높이는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Feature Scaling"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="41">
+          <div class="num">No.42</div>
+          <div class="term-line"><span class="ko">정규화</span> <span class="en">Normalization</span></div>
+          <div class="desc">데이터를 특정 범위로 변환하는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Normalization"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="42">
+          <div class="num">No.43</div>
+          <div class="term-line"><span class="ko">표준화</span> <span class="en">Standardization</span></div>
+          <div class="desc">데이터의 평균을 0, 표준편차를 1로 변환하는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Standardization"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="43">
+          <div class="num">No.44</div>
+          <div class="term-line"><span class="ko">원-핫 인코딩</span> <span class="en">One-Hot Encoding</span></div>
+          <div class="desc">범주형 데이터를 수치 데이터로 변환하는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="One-Hot Encoding"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">자연어 처리 (NLP)<span></span></div>
+        <div class="card" data-i="44">
+          <div class="num">No.45</div>
+          <div class="term-line"><span class="ko">자연어 처리</span> <span class="en">Natural Language Processing (NLP)</span></div>
+          <div class="desc">AI가 인간의 언어를 이해하고 처리하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Natural Language Processing (NLP)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="45">
+          <div class="num">No.46</div>
+          <div class="term-line"><span class="ko">텍스트 분류</span> <span class="en">Text Classification</span></div>
+          <div class="desc">텍스트를 특정 카테고리로 분류하는 작업.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Text Classification"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="46">
+          <div class="num">No.47</div>
+          <div class="term-line"><span class="ko">감성 분석</span> <span class="en">Sentiment Analysis</span></div>
+          <div class="desc">텍스트의 긍정·부정을 판단하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Sentiment Analysis"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="47">
+          <div class="num">No.48</div>
+          <div class="term-line"><span class="ko">개체명 인식</span> <span class="en">Named Entity Recognition</span></div>
+          <div class="desc">텍스트에서 사람·장소·조직 등의 정보를 인식하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Named Entity Recognition"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="48">
+          <div class="num">No.49</div>
+          <div class="term-line"><span class="ko">기계 번역</span> <span class="en">Machine Translation</span></div>
+          <div class="desc">AI가 자동으로 언어를 번역하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Machine Translation"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="49">
+          <div class="num">No.50</div>
+          <div class="term-line"><span class="ko">챗봇</span> <span class="en">Chatbot</span></div>
+          <div class="desc">AI 기반의 대화형 프로그램.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Chatbot"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="50">
+          <div class="num">No.51</div>
+          <div class="term-line"><span class="ko">음성 인식</span> <span class="en">Speech Recognition</span></div>
+          <div class="desc">음성을 텍스트로 변환하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Speech Recognition"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="51">
+          <div class="num">No.52</div>
+          <div class="term-line"><span class="ko">텍스트 음성 변환</span> <span class="en">Text-to-Speech (TTS)</span></div>
+          <div class="desc">텍스트를 음성으로 변환하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Text-to-Speech (TTS)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">컴퓨터 비전<span></span></div>
+        <div class="card" data-i="52">
+          <div class="num">No.53</div>
+          <div class="term-line"><span class="ko">컴퓨터 비전</span> <span class="en">Computer Vision</span></div>
+          <div class="desc">AI가 이미지를 인식하고 분석하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Computer Vision"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="53">
+          <div class="num">No.54</div>
+          <div class="term-line"><span class="ko">이미지 분류</span> <span class="en">Image Classification</span></div>
+          <div class="desc">이미지를 특정 카테고리로 분류하는 작업.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Image Classification"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="54">
+          <div class="num">No.55</div>
+          <div class="term-line"><span class="ko">객체 감지</span> <span class="en">Object Detection</span></div>
+          <div class="desc">이미지 내 객체의 위치와 종류를 파악하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Object Detection"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="55">
+          <div class="num">No.56</div>
+          <div class="term-line"><span class="ko">이미지 분할</span> <span class="en">Image Segmentation</span></div>
+          <div class="desc">이미지를 픽셀 단위로 분할하여 객체를 인식하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Image Segmentation"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="56">
+          <div class="num">No.57</div>
+          <div class="term-line"><span class="ko">생성적 적대 신경망</span> <span class="en">Generative Adversarial Network (GAN)</span></div>
+          <div class="desc">이미지 생성 등에 사용되는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Generative Adversarial Network (GAN)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">강화 학습<span></span></div>
+        <div class="card" data-i="57">
+          <div class="num">No.58</div>
+          <div class="term-line"><span class="ko">강화 학습</span> <span class="en">Reinforcement Learning</span></div>
+          <div class="desc">보상을 통해, 환경과 상호작용하며 학습하는 방식.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Reinforcement Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="58">
+          <div class="num">No.59</div>
+          <div class="term-line"><span class="ko">에이전트</span> <span class="en">Agent</span></div>
+          <div class="desc">강화 학습에서 학습 주체를 의미한다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Agent"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="59">
+          <div class="num">No.60</div>
+          <div class="term-line"><span class="ko">환경</span> <span class="en">Environment</span></div>
+          <div class="desc">에이전트가 상호작용하는 외부 환경.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Environment"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="60">
+          <div class="num">No.61</div>
+          <div class="term-line"><span class="ko">상태</span> <span class="en">State</span></div>
+          <div class="desc">에이전트가 현재 환경을 인식하는 정보.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="State"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="61">
+          <div class="num">No.62</div>
+          <div class="term-line"><span class="ko">액션 (행동)</span> <span class="en">Action</span></div>
+          <div class="desc">에이전트가 환경에 대해 수행하는 동작.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Action"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="62">
+          <div class="num">No.63</div>
+          <div class="term-line"><span class="ko">보상</span> <span class="en">Reward</span></div>
+          <div class="desc">에이전트의 행동에 대한 긍정적 또는 부정적 피드백.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Reward"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="63">
+          <div class="num">No.64</div>
+          <div class="term-line"><span class="ko">정책</span> <span class="en">Policy</span></div>
+          <div class="desc">에이전트가 어떤 행동을 할지 결정하는 전략.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Policy"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="64">
+          <div class="num">No.65</div>
+          <div class="term-line"><span class="ko">가치 함수</span> <span class="en">Value Function</span></div>
+          <div class="desc">특정 상태에서 얻을 수 있는 예상 보상을 추정하는 함수.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Value Function"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="65">
+          <div class="num">No.66</div>
+          <div class="term-line"><span class="ko">Q-러닝</span> <span class="en">Q-Learning</span></div>
+          <div class="desc">강화 학습 알고리즘 중 하나.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Q-Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="66">
+          <div class="num">No.67</div>
+          <div class="term-line"><span class="ko">심층 Q-네트워크</span> <span class="en">Deep Q-Network (DQN)</span></div>
+          <div class="desc">딥러닝을 활용한 강화 학습 알고리즘.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Deep Q-Network (DQN)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">학습 기법<span></span></div>
+        <div class="card" data-i="67">
+          <div class="num">No.68</div>
+          <div class="term-line"><span class="ko">전이 학습</span> <span class="en">Transfer Learning</span></div>
+          <div class="desc">기존에 학습된 모델을 새로운 문제에 적용하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Transfer Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="68">
+          <div class="num">No.69</div>
+          <div class="term-line"><span class="ko">미세 조정</span> <span class="en">Fine-tuning</span></div>
+          <div class="desc">전이 학습에서 기존 모델을 새 데이터에 맞게 추가 학습하는 과정.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Fine-tuning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="69">
+          <div class="num">No.70</div>
+          <div class="term-line"><span class="ko">앙상블 학습</span> <span class="en">Ensemble Learning</span></div>
+          <div class="desc">여러 모델의 예측을 결합하여 성능을 향상시키는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Ensemble Learning"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="70">
+          <div class="num">No.71</div>
+          <div class="term-line"><span class="ko">배깅</span> <span class="en">Bagging</span></div>
+          <div class="desc">앙상블 학습 기법 중 하나.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Bagging"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="71">
+          <div class="num">No.72</div>
+          <div class="term-line"><span class="ko">부스팅</span> <span class="en">Boosting</span></div>
+          <div class="desc">앙상블 학습 기법 중 하나.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Boosting"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="72">
+          <div class="num">No.73</div>
+          <div class="term-line"><span class="ko">그래디언트 부스팅</span> <span class="en">Gradient Boosting</span></div>
+          <div class="desc">부스팅 기법의 일종.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Gradient Boosting"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="73">
+          <div class="num">No.74</div>
+          <div class="term-line"><span class="ko">XGBoost</span> <span class="en">XGBoost</span></div>
+          <div class="desc">그래디언트 부스팅의 한 종류로 뛰어난 성능을 자랑한다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="XGBoost"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="74">
+          <div class="num">No.75</div>
+          <div class="term-line"><span class="ko">데이터 마이닝</span> <span class="en">Data Mining</span></div>
+          <div class="desc">데이터에서 유용한 정보를 추출하는 과정.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Data Mining"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="75">
+          <div class="num">No.76</div>
+          <div class="term-line"><span class="ko">군집화</span> <span class="en">Clustering</span></div>
+          <div class="desc">데이터를 유사한 그룹으로 묶는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Clustering"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="76">
+          <div class="num">No.77</div>
+          <div class="term-line"><span class="ko">이상 감지</span> <span class="en">Anomaly Detection</span></div>
+          <div class="desc">정상 데이터와 다른 이상 데이터를 찾아내는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Anomaly Detection"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="77">
+          <div class="num">No.78</div>
+          <div class="term-line"><span class="ko">추천 시스템</span> <span class="en">Recommendation System</span></div>
+          <div class="desc">사용자에게 상품·콘텐츠 등을 추천하는 시스템.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Recommendation System"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="78">
+          <div class="num">No.79</div>
+          <div class="term-line"><span class="ko">A/B 테스팅</span> <span class="en">A/B Testing</span></div>
+          <div class="desc">둘 이상의 버전을 비교하여 어떤 것이 더 효과적인지 평가하는 방법.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="A/B Testing"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">인프라 · 도구<span></span></div>
+        <div class="card" data-i="79">
+          <div class="num">No.80</div>
+          <div class="term-line"><span class="ko">클라우드 컴퓨팅</span> <span class="en">Cloud Computing</span></div>
+          <div class="desc">인터넷을 통해 컴퓨팅 자원을 사용하는 방식.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Cloud Computing"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="80">
+          <div class="num">No.81</div>
+          <div class="term-line"><span class="ko">GPU</span> <span class="en">Graphics Processing Unit</span></div>
+          <div class="desc">AI 학습에 사용되는 고성능 연산 장치 (그래픽 처리 장치).</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Graphics Processing Unit"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="81">
+          <div class="num">No.82</div>
+          <div class="term-line"><span class="ko">TPU</span> <span class="en">Tensor Processing Unit</span></div>
+          <div class="desc">구글에서 개발한 AI 전용 프로세서 (텐서 처리 장치).</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Tensor Processing Unit"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="82">
+          <div class="num">No.83</div>
+          <div class="term-line"><span class="ko">엣지 컴퓨팅</span> <span class="en">Edge Computing</span></div>
+          <div class="desc">데이터를 생성하는 기기 가까이에서 처리하는 방식.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Edge Computing"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="83">
+          <div class="num">No.84</div>
+          <div class="term-line"><span class="ko">API</span> <span class="en">Application Programming Interface</span></div>
+          <div class="desc">다른 프로그램과 데이터를 주고받기 위한 인터페이스.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Application Programming Interface"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="84">
+          <div class="num">No.85</div>
+          <div class="term-line"><span class="ko">SDK</span> <span class="en">Software Development Kit</span></div>
+          <div class="desc">소프트웨어 개발에 필요한 도구·라이브러리 등을 묶어 놓은 것.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Software Development Kit"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="85">
+          <div class="num">No.86</div>
+          <div class="term-line"><span class="ko">오픈소스</span> <span class="en">Open Source</span></div>
+          <div class="desc">누구나 자유롭게 사용하고 수정할 수 있는 소프트웨어.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Open Source"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="86">
+          <div class="num">No.87</div>
+          <div class="term-line"><span class="ko">프레임워크</span> <span class="en">Framework</span></div>
+          <div class="desc">소프트웨어 개발을 위한 기본적인 틀을 제공한다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Framework"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="87">
+          <div class="num">No.88</div>
+          <div class="term-line"><span class="ko">텐서플로우</span> <span class="en">TensorFlow</span></div>
+          <div class="desc">구글에서 개발한 딥러닝 프레임워크.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="TensorFlow"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="88">
+          <div class="num">No.89</div>
+          <div class="term-line"><span class="ko">파이토치</span> <span class="en">PyTorch</span></div>
+          <div class="desc">페이스북에서 개발한 딥러닝 프레임워크.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="PyTorch"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="89">
+          <div class="num">No.90</div>
+          <div class="term-line"><span class="ko">케라스</span> <span class="en">Keras</span></div>
+          <div class="desc">딥러닝 모델을 쉽게 만들 수 있도록 도와주는 API.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Keras"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="90">
+          <div class="num">No.91</div>
+          <div class="term-line"><span class="ko">사이킷런</span> <span class="en">Scikit-learn</span></div>
+          <div class="desc">머신러닝 모델을 쉽게 구현할 수 있는 라이브러리.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Scikit-learn"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="91">
+          <div class="num">No.92</div>
+          <div class="term-line"><span class="ko">주피터 노트북</span> <span class="en">Jupyter Notebook</span></div>
+          <div class="desc">코드 실행·시각화 등을 할 수 있는 개발 환경.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Jupyter Notebook"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="92">
+          <div class="num">No.93</div>
+          <div class="term-line"><span class="ko">배포</span> <span class="en">Deployment</span></div>
+          <div class="desc">AI 모델을 실제 서비스에 적용하는 과정.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Deployment"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="93">
+          <div class="num">No.94</div>
+          <div class="term-line"><span class="ko">확장성</span> <span class="en">Scalability</span></div>
+          <div class="desc">시스템이 증가하는 요구에 맞춰 얼마나 쉽게 확장될 수 있는지를 나타낸다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Scalability"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="cat-head">AI 윤리<span></span></div>
+        <div class="card" data-i="94">
+          <div class="num">No.95</div>
+          <div class="term-line"><span class="ko">설명 가능한 AI</span> <span class="en">Explainable AI (XAI)</span></div>
+          <div class="desc">AI 모델의 의사결정 과정을 설명하는 기술.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Explainable AI (XAI)"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="95">
+          <div class="num">No.96</div>
+          <div class="term-line"><span class="ko">공정성</span> <span class="en">Fairness</span></div>
+          <div class="desc">AI 모델이 모든 집단에게 공정하게 적용될 수 있는지를 나타낸다.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Fairness"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+        <div class="card" data-i="96">
+          <div class="num">No.97</div>
+          <div class="term-line"><span class="ko">윤리</span> <span class="en">Ethics</span></div>
+          <div class="desc">AI 개발 및 사용에 있어서 지켜야 할 윤리적 가치.</div>
+          <div class="card-actions">
+            <button class="speak-btn" data-say="Ethics"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+            <button class="know-btn">외웠어요?</button>
+          </div>
+        </div>
+  </main>
+
+  <!-- FLASHCARD VIEW -->
+  <section id="flash">
+    <div class="flash-stage">
+      <div class="flash" id="flashCard">
+        <div class="face front">
+          <div class="num" id="fNum"></div>
+          <div class="ko" id="fKo"></div>
+          <div class="flash-speak"></div>
+          <div class="hint">탭하면 뒤집힘</div>
+        </div>
+        <div class="face back">
+          <div class="ko-sm" id="bKo"></div>
+          <div class="en" id="bEn"></div>
+          <div class="desc" id="bDesc"></div>
+          <div class="hint">탭하면 돌아감</div>
+        </div>
+      </div>
+    </div>
+    <div class="flash-nav">
+      <button class="nav-btn" id="prevBtn">← 이전</button>
+      <span class="flash-count"><span id="fIdx">1</span> / <span id="fTotal">0</span></span>
+      <button class="nav-btn" id="nextBtn">다음 →</button>
+    </div>
+    <div class="flash-tools">
+      <button id="flashSpeak"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음 듣기</button>
+      <button id="shuffleBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 3h5v5"/><path d="M4 20 21 3"/><path d="M21 16v5h-5"/><path d="m15 15 6 6"/><path d="M4 4l5 5"/></svg> 섞기</button>
+      <button id="orderBtn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9 9 0 0 0-6.5 2.8L3 8"/><path d="M3 3v5h5"/></svg> 원래 순서</button>
+    </div>
+  </section>
+
+  <footer>발음은 기기의 브라우저 음성엔진을 사용합니다 · Edge / Chrome 권장</footer>
+</div>
+
+<!-- 설정 시트 -->
+<div class="sheet-backdrop" id="backdrop"></div>
+<div class="sheet" id="sheet">
+  <div class="grip"></div>
+  <h3>설정</h3>
+  <div class="field">
+    <label>발음 목소리</label>
+    <select id="voiceSel"></select>
+  </div>
+  <div class="field">
+    <label>말하기 속도</label>
+    <div class="rate-wrap">
+      <input id="rate" type="range" min="0.7" max="1.4" step="0.05" value="1">
+      <b id="rateVal">1.00x</b>
+    </div>
+  </div>
+  <div class="field">
+    <button class="reset" id="resetBtn">진도 초기화</button>
+  </div>
+</div>
+
+<!-- 하단 탭 -->
+<nav class="bottomnav">
+  <button id="mList" class="on"><span class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg></span>목록</button>
+  <button id="mFlash"><span class="ic"><svg width="23" height="23" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><rect x="2.5" y="6" width="13" height="15" rx="2"/><path d="M8 6V4.5a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2h-1.5"/></svg></span>플래시카드</button>
+</nav>
+
+<script>
+/* ============ 데이터 ============ */
+const CATS = {
+  found:"기초 개념",
+  learn:"학습 방식",
+  net:"신경망 구조",
+  train:"모델 훈련",
+  eval:"성능 평가",
+  prep:"데이터 전처리",
+  nlp:"자연어 처리 (NLP)",
+  vision:"컴퓨터 비전",
+  rl:"강화 학습",
+  tech:"학습 기법",
+  infra:"인프라 · 도구",
+  ethics:"AI 윤리"
+};
+
+const TERMS = [
+  // 기초 개념
+  ["인공지능","Artificial Intelligence (AI)","사람처럼 생각하고 배우고 문제를 해결하는 컴퓨터 기술.","found"],
+  ["머신러닝","Machine Learning","AI의 한 분야로, 컴퓨터가 데이터를 통해 스스로 학습하는 기술.","found"],
+  ["딥러닝","Deep Learning","머신러닝의 한 종류로, 인공 신경망을 사용해 더 복잡한 문제를 해결.","found"],
+  ["알고리즘","Algorithm","문제를 해결하기 위한 단계별 절차나 방법. AI의 핵심.","found"],
+  ["데이터","Data","AI가 학습하고 분석하는 데 사용하는 정보. 텍스트·이미지·소리 등.","found"],
+  ["빅데이터","Big Data","엄청나게 큰 규모의 데이터. AI는 이를 활용해 학습한다.","found"],
+  ["트레이닝","Training","AI 모델이 데이터를 통해 학습하는 과정. 일종의 공부.","found"],
+  ["모델","Model","AI가 학습한 결과를 나타내는 것. 쉽게 말해 AI의 지식 창고.","found"],
+  ["피처 (특징)","Feature","데이터에서 AI가 학습하는 중요한 요소. (예: 고양이 인식의 수염·귀)","found"],
+
+  // 학습 방식
+  ["파라미터 (매개변수)","Parameter","AI 모델 내부에서 학습되는 값. 모델 성능에 영향을 미친다.","learn"],
+  ["지도 학습","Supervised Learning","정답이 있는 데이터를 통해 학습하는 방식.","learn"],
+  ["비지도 학습","Unsupervised Learning","정답 없이 데이터 자체의 패턴을 학습하는 방식.","learn"],
+
+  // 신경망 구조
+  ["신경망","Neural Network","AI의 핵심 구조로 인간의 뇌 신경망을 모방했다.","net"],
+  ["심층 신경망","Deep Neural Network","여러 층으로 구성된 신경망으로 딥러닝에 사용된다.","net"],
+  ["노드 (뉴런)","Node / Neuron","신경망의 기본 구성 요소로 정보를 처리한다.","net"],
+  ["레이어 (층)","Layer","신경망 내에서 노드들이 모여 있는 층.","net"],
+  ["활성화 함수","Activation Function","노드의 출력을 결정하는 함수.","net"],
+  ["가중치","Weight","신경망 연결의 강도를 나타내는 값. 학습을 통해 조정된다.","net"],
+  ["편향","Bias","신경망의 학습을 돕는 값.","net"],
+
+  // 모델 훈련
+  ["에포크","Epoch","전체 데이터를 한 번 학습하는 단위.","train"],
+  ["배치 사이즈","Batch Size","한 번의 학습에 사용되는 데이터의 양.","train"],
+  ["이터레이션 (반복)","Iteration","한 번의 에포크 내에서 학습이 반복되는 횟수.","train"],
+  ["손실 함수","Loss Function","모델의 예측과 실제 값의 차이를 측정하는 함수.","train"],
+  ["옵티마이저 (최적화)","Optimizer","손실을 최소화하기 위해 모델을 튜닝하는 알고리즘.","train"],
+  ["경사 하강법","Gradient Descent","옵티마이저가 사용하는 방법 중 하나.","train"],
+  ["학습률","Learning Rate","모델 학습 속도를 조절하는 값.","train"],
+  ["과적합","Overfitting","훈련 데이터에 너무 맞춰져 새로운 데이터 예측 능력이 떨어지는 현상.","train"],
+  ["과소적합","Underfitting","모델이 훈련 데이터조차 제대로 학습하지 못하는 현상.","train"],
+
+  // 성능 평가
+  ["검증 세트","Validation Set","학습 중 모델의 성능을 평가하기 위해 사용되는 데이터 세트.","eval"],
+  ["테스트 세트","Test Set","최종 모델의 성능을 평가하기 위해 사용되는 데이터 세트.","eval"],
+  ["정확도","Accuracy","모델의 예측이 얼마나 정확한지를 나타내는 지표.","eval"],
+  ["정밀도","Precision","모델이 긍정으로 예측한 것 중 실제로 긍정인 비율.","eval"],
+  ["재현율","Recall","실제 긍정인 것 중 모델이 긍정으로 예측한 비율.","eval"],
+  ["F1 점수","F1 Score","정밀도와 재현율의 조화 평균.","eval"],
+  ["혼동 행렬","Confusion Matrix","모델의 예측 결과를 시각적으로 보여주는 표.","eval"],
+  ["ROC 곡선","ROC Curve","모델의 성능을 시각적으로 평가하는 도구.","eval"],
+  ["AUC","Area Under the Curve","ROC 곡선 아래의 면적을 의미하며 모델 성능을 나타낸다.","eval"],
+  ["편향-분산 트레이드오프","Bias-Variance Tradeoff","모델의 편향과 분산 사이의 관계를 나타낸다.","eval"],
+
+  // 데이터 전처리
+  ["데이터 전처리","Data Preprocessing","데이터를 학습에 적합한 형태로 변환하는 과정.","prep"],
+  ["데이터 정제","Data Cleaning","결측치·이상치 등을 처리하여 데이터를 깨끗하게 만드는 과정.","prep"],
+  ["특징 스케일링","Feature Scaling","특징 값의 범위를 조정하여 학습 효율을 높이는 방법.","prep"],
+  ["정규화","Normalization","데이터를 특정 범위로 변환하는 방법.","prep"],
+  ["표준화","Standardization","데이터의 평균을 0, 표준편차를 1로 변환하는 방법.","prep"],
+  ["원-핫 인코딩","One-Hot Encoding","범주형 데이터를 수치 데이터로 변환하는 방법.","prep"],
+
+  // 자연어 처리
+  ["자연어 처리","Natural Language Processing (NLP)","AI가 인간의 언어를 이해하고 처리하는 기술.","nlp"],
+  ["텍스트 분류","Text Classification","텍스트를 특정 카테고리로 분류하는 작업.","nlp"],
+  ["감성 분석","Sentiment Analysis","텍스트의 긍정·부정을 판단하는 기술.","nlp"],
+  ["개체명 인식","Named Entity Recognition","텍스트에서 사람·장소·조직 등의 정보를 인식하는 기술.","nlp"],
+  ["기계 번역","Machine Translation","AI가 자동으로 언어를 번역하는 기술.","nlp"],
+  ["챗봇","Chatbot","AI 기반의 대화형 프로그램.","nlp"],
+  ["음성 인식","Speech Recognition","음성을 텍스트로 변환하는 기술.","nlp"],
+  ["텍스트 음성 변환","Text-to-Speech (TTS)","텍스트를 음성으로 변환하는 기술.","nlp"],
+
+  // 컴퓨터 비전
+  ["컴퓨터 비전","Computer Vision","AI가 이미지를 인식하고 분석하는 기술.","vision"],
+  ["이미지 분류","Image Classification","이미지를 특정 카테고리로 분류하는 작업.","vision"],
+  ["객체 감지","Object Detection","이미지 내 객체의 위치와 종류를 파악하는 기술.","vision"],
+  ["이미지 분할","Image Segmentation","이미지를 픽셀 단위로 분할하여 객체를 인식하는 기술.","vision"],
+  ["생성적 적대 신경망","Generative Adversarial Network (GAN)","이미지 생성 등에 사용되는 기술.","vision"],
+
+  // 강화 학습
+  ["강화 학습","Reinforcement Learning","보상을 통해, 환경과 상호작용하며 학습하는 방식.","rl"],
+  ["에이전트","Agent","강화 학습에서 학습 주체를 의미한다.","rl"],
+  ["환경","Environment","에이전트가 상호작용하는 외부 환경.","rl"],
+  ["상태","State","에이전트가 현재 환경을 인식하는 정보.","rl"],
+  ["액션 (행동)","Action","에이전트가 환경에 대해 수행하는 동작.","rl"],
+  ["보상","Reward","에이전트의 행동에 대한 긍정적 또는 부정적 피드백.","rl"],
+  ["정책","Policy","에이전트가 어떤 행동을 할지 결정하는 전략.","rl"],
+  ["가치 함수","Value Function","특정 상태에서 얻을 수 있는 예상 보상을 추정하는 함수.","rl"],
+  ["Q-러닝","Q-Learning","강화 학습 알고리즘 중 하나.","rl"],
+  ["심층 Q-네트워크","Deep Q-Network (DQN)","딥러닝을 활용한 강화 학습 알고리즘.","rl"],
+
+  // 학습 기법
+  ["전이 학습","Transfer Learning","기존에 학습된 모델을 새로운 문제에 적용하는 기술.","tech"],
+  ["미세 조정","Fine-tuning","전이 학습에서 기존 모델을 새 데이터에 맞게 추가 학습하는 과정.","tech"],
+  ["앙상블 학습","Ensemble Learning","여러 모델의 예측을 결합하여 성능을 향상시키는 방법.","tech"],
+  ["배깅","Bagging","앙상블 학습 기법 중 하나.","tech"],
+  ["부스팅","Boosting","앙상블 학습 기법 중 하나.","tech"],
+  ["그래디언트 부스팅","Gradient Boosting","부스팅 기법의 일종.","tech"],
+  ["XGBoost","XGBoost","그래디언트 부스팅의 한 종류로 뛰어난 성능을 자랑한다.","tech"],
+  ["데이터 마이닝","Data Mining","데이터에서 유용한 정보를 추출하는 과정.","tech"],
+  ["군집화","Clustering","데이터를 유사한 그룹으로 묶는 기술.","tech"],
+  ["이상 감지","Anomaly Detection","정상 데이터와 다른 이상 데이터를 찾아내는 기술.","tech"],
+  ["추천 시스템","Recommendation System","사용자에게 상품·콘텐츠 등을 추천하는 시스템.","tech"],
+  ["A/B 테스팅","A/B Testing","둘 이상의 버전을 비교하여 어떤 것이 더 효과적인지 평가하는 방법.","tech"],
+
+  // 인프라 · 도구
+  ["클라우드 컴퓨팅","Cloud Computing","인터넷을 통해 컴퓨팅 자원을 사용하는 방식.","infra"],
+  ["GPU","Graphics Processing Unit","AI 학습에 사용되는 고성능 연산 장치 (그래픽 처리 장치).","infra"],
+  ["TPU","Tensor Processing Unit","구글에서 개발한 AI 전용 프로세서 (텐서 처리 장치).","infra"],
+  ["엣지 컴퓨팅","Edge Computing","데이터를 생성하는 기기 가까이에서 처리하는 방식.","infra"],
+  ["API","Application Programming Interface","다른 프로그램과 데이터를 주고받기 위한 인터페이스.","infra"],
+  ["SDK","Software Development Kit","소프트웨어 개발에 필요한 도구·라이브러리 등을 묶어 놓은 것.","infra"],
+  ["오픈소스","Open Source","누구나 자유롭게 사용하고 수정할 수 있는 소프트웨어.","infra"],
+  ["프레임워크","Framework","소프트웨어 개발을 위한 기본적인 틀을 제공한다.","infra"],
+  ["텐서플로우","TensorFlow","구글에서 개발한 딥러닝 프레임워크.","infra"],
+  ["파이토치","PyTorch","페이스북에서 개발한 딥러닝 프레임워크.","infra"],
+  ["케라스","Keras","딥러닝 모델을 쉽게 만들 수 있도록 도와주는 API.","infra"],
+  ["사이킷런","Scikit-learn","머신러닝 모델을 쉽게 구현할 수 있는 라이브러리.","infra"],
+  ["주피터 노트북","Jupyter Notebook","코드 실행·시각화 등을 할 수 있는 개발 환경.","infra"],
+  ["배포","Deployment","AI 모델을 실제 서비스에 적용하는 과정.","infra"],
+  ["확장성","Scalability","시스템이 증가하는 요구에 맞춰 얼마나 쉽게 확장될 수 있는지를 나타낸다.","infra"],
+
+  // AI 윤리
+  ["설명 가능한 AI","Explainable AI (XAI)","AI 모델의 의사결정 과정을 설명하는 기술.","ethics"],
+  ["공정성","Fairness","AI 모델이 모든 집단에게 공정하게 적용될 수 있는지를 나타낸다.","ethics"],
+  ["윤리","Ethics","AI 개발 및 사용에 있어서 지켜야 할 윤리적 가치.","ethics"],
+];
+
+/* ============ 상태 ============ */
+const STORE_KEY = "aiTermsKnown_v1";
+let known = new Set();
+try{ const s = localStorage.getItem(STORE_KEY); if(s) known = new Set(JSON.parse(s)); }catch(e){}
+function saveKnown(){ try{ localStorage.setItem(STORE_KEY, JSON.stringify([...known])); }catch(e){} }
+
+let activeCat = "all";
+let query = "";
+const $ = id => document.getElementById(id);
+
+/* ============ 음성 (TTS) ============ */
+let voices = [], chosenVoice = null;
+const sayText = en => en.replace(/\s*\(.*?\)\s*/g,' ').replace(/\//g,' ').trim();
+
+function loadVoices(){
+  // 노래하거나 기계음인 노벨티 음성 제외 목록
+  const BAD = /albert|bad ?news|bahh|bells|boing|bubbles|cellos|good ?news|jester|organ|superstar|trinoids|whisper|wobble|zarvox|deranged|hysterical|princess|fred|junior|kathy|ralph|espeak|novelty/i;
+  const all = (window.speechSynthesis ? speechSynthesis.getVoices() : []);
+  voices = all.filter(v=>/^en/i.test(v.lang) && !BAD.test(v.name));
+  if(!voices.length) voices = all.filter(v=>/^en/i.test(v.lang)); // 안전장치
+  const sel = $("voiceSel");
+  sel.innerHTML = "";
+  if(!voices.length){ sel.innerHTML = "<option>음성 없음</option>"; return; }
+  // 자연어/고품질 음성 우선 정렬
+  voices.sort((a,b)=>{
+    const score = v => (/natural|online|google|premium|enhanced|siri/i.test(v.name)?0:1);
+    return score(a)-score(b);
+  });
+  voices.forEach((v,i)=>{
+    const o=document.createElement("option");
+    o.value=i; o.textContent = v.name.replace("Microsoft ","").replace(" Online (Natural)"," ✦") + " · "+v.lang;
+    sel.appendChild(o);
+  });
+  chosenVoice = voices[0];
+  sel.value = 0;
+}
+try{
+  if(window.speechSynthesis){
+    loadVoices();
+    speechSynthesis.onvoiceschanged = loadVoices;
+  }
+}catch(e){ /* 일부 인앱 브라우저는 음성 API 미지원 — 무시하고 진행 */ }
+$("voiceSel").addEventListener("change",e=>{ chosenVoice = voices[+e.target.value]||null; });
+
+let curRate = 1.0;
+$("rate").addEventListener("input",e=>{ curRate=+e.target.value; $("rateVal").textContent=curRate.toFixed(2)+"x"; });
+
+let activeBtn = null;
+function speak(text, btn){
+  if(!window.speechSynthesis){ alert("이 브라우저는 음성 합성을 지원하지 않습니다."); return; }
+  speechSynthesis.cancel();
+  if(activeBtn){ activeBtn.classList.remove("playing"); }
+  const u = new SpeechSynthesisUtterance(sayText(text));
+  u.lang = chosenVoice ? chosenVoice.lang : "en-US";
+  if(chosenVoice) u.voice = chosenVoice;
+  u.rate = curRate;
+  u.pitch = 1.0;
+  if(btn){ btn.classList.add("playing"); activeBtn=btn;
+    u.onend = u.onerror = ()=>{ btn.classList.remove("playing"); };
+  }
+  speechSynthesis.speak(u);
+}
+
+/* ============ 목록 렌더 ============ */
+function matches(t){
+  const inCat = activeCat==="all" || t[3]===activeCat;
+  const q = query.toLowerCase();
+  const inQ = !q || t[0].toLowerCase().includes(q) || t[1].toLowerCase().includes(q) || t[2].toLowerCase().includes(q);
+  return inCat && inQ;
+}
+
+function renderChips(){
+  const chips = $("chips");
+  const counts = {}; TERMS.forEach(t=>counts[t[3]]=(counts[t[3]]||0)+1);
+  let html = `<button class="chip ${activeCat==='all'?'on':''}" data-cat="all">전체<span class="c">${TERMS.length}</span></button>`;
+  for(const k in CATS){ html += `<button class="chip ${activeCat===k?'on':''}" data-cat="${k}">${CATS[k]}<span class="c">${counts[k]||0}</span></button>`; }
+  chips.innerHTML = html;
+  chips.querySelectorAll(".chip").forEach(c=>c.onclick=()=>{ activeCat=c.dataset.cat; query=""; $("search").value=""; renderChips(); renderList(); });
+}
+
+function renderList(){
+  const list = $("list");
+  const items = TERMS.map((t,i)=>({t,i})).filter(o=>matches(o.t));
+  if(!items.length){ list.innerHTML = `<div class="empty">검색 결과가 없습니다.</div>`; return; }
+  // 카테고리별 그룹
+  let html=""; let lastCat=null;
+  items.forEach(({t,i})=>{
+    if(t[3]!==lastCat && activeCat==="all" && !query){
+      html += `<div class="cat-head">${CATS[t[3]]}<span></span></div>`;
+      lastCat=t[3];
+    }
+    const isK = known.has(i);
+    html += `
+      <div class="card ${isK?'known':''}" data-i="${i}">
+        <div class="num">No.${String(i+1).padStart(2,'0')}</div>
+        <div class="term-line">
+          <span class="ko">${t[0]}</span>
+          <span class="en">${t[1]}</span>
+        </div>
+        <div class="desc">${t[2]}</div>
+        <div class="card-actions">
+          <button class="speak-btn" data-say="${t[1].replace(/"/g,'&quot;')}"><svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg> 발음</button>
+          <button class="know-btn">${isK?'✓ 외웠어요':'외웠어요?'}</button>
+        </div>
+      </div>`;
+  });
+  list.innerHTML = html;
+  list.querySelectorAll(".speak-btn").forEach(b=>b.onclick=()=>speak(b.dataset.say,b));
+  list.querySelectorAll(".know-btn").forEach(b=>b.onclick=function(){
+    const card=this.closest(".card"); const i=+card.dataset.i;
+    if(known.has(i)) known.delete(i); else known.add(i);
+    saveKnown(); updateProgress();
+    card.classList.toggle("known");
+    this.textContent = known.has(i)?'✓ 외웠어요':'외웠어요?';
+  });
+}
+
+function updateProgress(){
+  const pct = TERMS.length? Math.round(known.size/TERMS.length*100):0;
+  $("fill").style.width = pct+"%";
+  $("knownCount").textContent = known.size;
+  const pl = $("pctLabel"); if(pl) pl.textContent = pct+"%";
+}
+
+/* ============ 플래시카드 ============ */
+let order = TERMS.map((_,i)=>i);
+let fpos = 0;
+const flashCard = $("flashCard");
+
+function renderFlash(){
+  const i = order[fpos]; const t=TERMS[i];
+  flashCard.classList.remove("flipped");
+  $("fNum").textContent = "No."+String(i+1).padStart(2,'0');
+  $("fKo").textContent = t[0];
+  $("bKo").textContent = t[0];
+  $("bEn").textContent = t[1];
+  $("bDesc").textContent = t[2];
+  $("fIdx").textContent = fpos+1;
+  $("fTotal").textContent = order.length;
+  $("prevBtn").disabled = fpos===0;
+  $("nextBtn").disabled = fpos===order.length-1;
+}
+flashCard.onclick = ()=>flashCard.classList.toggle("flipped");
+$("prevBtn").onclick = ()=>{ if(fpos>0){fpos--;renderFlash();} };
+$("nextBtn").onclick = ()=>{ if(fpos<order.length-1){fpos++;renderFlash();} };
+$("flashSpeak").onclick = ()=>speak(TERMS[order[fpos]][1], null);
+$("shuffleBtn").onclick = ()=>{ for(let k=order.length-1;k>0;k--){const j=Math.floor(Math.random()*(k+1));[order[k],order[j]]=[order[j],order[k]];} fpos=0; renderFlash(); };
+$("orderBtn").onclick = ()=>{ order=TERMS.map((_,i)=>i); fpos=0; renderFlash(); };
+
+/* ============ 모드 전환 ============ */
+$("mList").onclick = ()=>{ $("mList").classList.add("on"); $("mFlash").classList.remove("on"); $("list").style.display="block"; $("flash").style.display="none"; window.scrollTo({top:0,behavior:"smooth"}); };
+$("mFlash").onclick = ()=>{ $("mFlash").classList.add("on"); $("mList").classList.remove("on"); $("list").style.display="none"; $("flash").style.display="block"; renderFlash(); window.scrollTo({top:0,behavior:"smooth"}); };
+
+/* ============ 설정 시트 ============ */
+function openSheet(){ $("sheet").classList.add("open"); $("backdrop").classList.add("open"); }
+function closeSheet(){ $("sheet").classList.remove("open"); $("backdrop").classList.remove("open"); }
+$("gearBtn").onclick = openSheet;
+$("backdrop").onclick = closeSheet;
+
+/* ============ 플래시카드 스와이프 ============ */
+let tStartX=0, tStartY=0;
+flashCard.addEventListener("touchstart",e=>{ tStartX=e.touches[0].clientX; tStartY=e.touches[0].clientY; },{passive:true});
+flashCard.addEventListener("touchend",e=>{
+  const dx=e.changedTouches[0].clientX-tStartX, dy=e.changedTouches[0].clientY-tStartY;
+  if(Math.abs(dx)>55 && Math.abs(dx)>Math.abs(dy)*1.4){
+    if(dx<0 && fpos<order.length-1){fpos++;renderFlash();}
+    else if(dx>0 && fpos>0){fpos--;renderFlash();}
+  }
+},{passive:true});
+
+/* ============ 검색 / 초기화 ============ */
+$("search").addEventListener("input",e=>{ query=e.target.value.trim(); renderList(); });
+$("resetBtn").onclick = ()=>{ if(confirm("외움 표시를 모두 초기화할까요?")){ known.clear(); saveKnown(); updateProgress(); renderList(); } };
+
+/* ============ 초기화 ============ */
+$("totalCount").textContent = TERMS.length;
+$("totalCount2").textContent = TERMS.length;
+$("catCount").textContent = Object.keys(CATS).length;
+renderChips();
+renderList();
+updateProgress();
+$("rateVal").textContent = curRate.toFixed(2)+"x";
+</script>
+</body>
+</html>
