@@ -280,3 +280,9 @@ body::before{content:"";position:fixed;inset:0;z-index:0;pointer-events:none;mix
 .ex-spk:active{transform:scale(.9);}
 .ex-spk.playing{background:var(--terra);color:#fff;border-color:var(--terra);}
 .ex-spk svg{width:14px;height:14px;}
+
+/* ---------- Segmented control (lang toggle) ---------- */
+.seg{display:flex;background:var(--paper-2);border:1.5px solid var(--line);border-radius:12px;padding:3px;gap:3px;}
+.seg-btn{flex:1;padding:9px 12px;border:none;background:transparent;border-radius:9px;cursor:pointer;font-family:inherit;font-size:13px;font-weight:600;color:var(--ink-soft);transition:.15s;}
+.seg-btn.active{background:var(--card);color:var(--ink);box-shadow:0 1px 0 var(--shadow);}
+.seg-btn:active{transform:scale(.97);}

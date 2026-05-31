@@ -1,12 +1,12 @@
 /* ============ 상태 & 저장 ============ */
 const KEY="aiTerms_v2";
-let DB={known:[],days:[],log:{},goal:20,last:null,voiceURI:null};
+let DB={known:[],days:[],log:{},goal:20,last:null,voiceURI:null,lang:"ko"};
 try{const s=localStorage.getItem(KEY); if(s)DB=Object.assign(DB,JSON.parse(s));}catch(e){}
 let known=new Set(DB.known||[]);
 let days=new Set(DB.days||[]);
 let log=DB.log||{};
 let goal=DB.goal||20;
-function save(){try{localStorage.setItem(KEY,JSON.stringify({known:[...known],days:[...days],log,goal,last,voiceURI:savedVoiceURI}));}catch(e){}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify({known:[...known],days:[...days],log,goal,last,voiceURI:savedVoiceURI,lang}));}catch(e){}}
 
 const $=id=>document.getElementById(id);
 const $$=(s,el=document)=>Array.from(el.querySelectorAll(s));
@@ -17,6 +17,8 @@ const IC_BOOK='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" strok
 const IC_CHART='<svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"/><rect x="5" y="11" width="3.5" height="7" rx="1"/><rect x="10.2" y="6" width="3.5" height="12" rx="1"/><rect x="15.5" y="13" width="3.5" height="5" rx="1"/></svg>';
 const ADDED_CATS=new Set(["gen","coreml","ops","biz"]);
 const isAdded=t=>ADDED_CATS.has(t[3]);
+const prim=t=>lang==="en"?t[1]:t[0];
+const sec=t=>lang==="en"?t[0]:t[1];
 const SPK='<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M11 5 6 9H2v6h4l5 4z"/><path d="M15.5 8.5a5 5 0 0 1 0 7"/><path d="M19.5 5a9 9 0 0 1 0 14"/></svg>';
 
 function dkey(d){return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');}
@@ -144,8 +146,8 @@ function renderHome(){
     +resume
     +'<div class="sec-label">오늘의 단어</div>'
     +'<div class="wod"><div class="wod-top"><span class="wod-cat">'+CATS[wt[3]]+'</span><span class="wod-num">No.'+String(wi+1).padStart(2,"0")+(isAdded(wt)?' <span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</span></div>'
-    +'<div class="wod-line"><div class="wod-ko">'+esc(wt[0])+'</div><button class="wod-spk" data-say="'+esc(wt[1])+'" aria-label="발음">'+SPK+'</button></div>'
-    +'<div class="wod-en">'+esc(wt[1])+'</div><div class="wod-desc">'+esc(wt[2])+'</div>'
+    +'<div class="wod-line"><div class="wod-ko">'+esc(prim(wt))+'</div><button class="wod-spk" data-say="'+esc(wt[1])+'" aria-label="발음">'+SPK+'</button></div>'
+    +'<div class="wod-en">'+esc(sec(wt))+'</div><div class="wod-desc">'+esc(wt[2])+'</div>'
     +'<button class="wod-cta" data-act="cat-'+wt[3]+'">사전에서 이 분류 보기 →</button></div>'
     +'<div class="sec-label">카테고리</div>'
     +'<div class="cat-row">'+catRow+'</div>'
@@ -185,7 +187,7 @@ function renderList(){
   items.forEach(({t,i})=>{
     if(t[3]!==last&&activeCat==="all"&&!query){h+='<div class="cat-head">'+CATS[t[3]]+'<span></span></div>';last=t[3];}
     const k=known.has(i);
-    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+(isAdded(t)?'<span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</div><div class="entry"><div class="term-line"><span class="ko">'+t[0]+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+t[1]+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button><details class="ex"><summary>💼 비즈니스 예문</summary><div class="ex-row them"><span class="ex-tag">상대</span><p class="ex-en">'+esc(EXAMPLES[i][0])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][1])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][0])+'" aria-label="발음">'+SPK+'</button></div><div class="ex-row you"><span class="ex-tag">나</span><p class="ex-en">'+esc(EXAMPLES[i][2])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][3])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][2])+'" aria-label="발음">'+SPK+'</button></div></details></div></article>';
+    h+='<article class="card '+(k?"known":"")+'" data-i="'+i+'"><div class="num">'+String(i+1).padStart(2,"0")+(isAdded(t)?'<span class="ext-badge" title="유튜브 외 추가 단어">+</span>':'')+'</div><div class="entry"><div class="term-line"><span class="ko">'+prim(t)+'</span><button class="speak-btn" data-say="'+esc(t[1])+'" aria-label="발음 듣기">'+SPK+'</button></div><div class="en">'+sec(t)+'</div><div class="desc">'+t[2]+'</div><button class="know-btn">'+(k?"✓ 외웠어요":"외웠어요?")+'</button><details class="ex"><summary>💼 비즈니스 예문</summary><div class="ex-row them"><span class="ex-tag">상대</span><p class="ex-en">'+esc(EXAMPLES[i][0])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][1])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][0])+'" aria-label="발음">'+SPK+'</button></div><div class="ex-row you"><span class="ex-tag">나</span><p class="ex-en">'+esc(EXAMPLES[i][2])+'</p><p class="ex-ko">'+esc(EXAMPLES[i][3])+'</p><button class="ex-spk" data-say="'+esc(EXAMPLES[i][2])+'" aria-label="발음">'+SPK+'</button></div></details></div></article>';
   });
   $("list").innerHTML=h;
   $$(".speak-btn,.ex-spk",$("list")).forEach(b=>b.onclick=(e)=>{e.stopPropagation();speak(b.dataset.say,b);});
@@ -210,7 +212,7 @@ function renderStats(){
 }
 
 /* ============ 세션 & 러너 ============ */
-let sess=null;let last=DB.last||null;let savedVoiceURI=DB.voiceURI||null;
+let sess=null;let last=DB.last||null;let savedVoiceURI=DB.voiceURI||null;let lang=DB.lang||"ko";
 function openRunner(){$("runner").classList.add("on");document.body.style.overflow="hidden";}
 function closeRunner(){$("runner").classList.remove("on");document.body.style.overflow="";try{speechSynthesis.cancel();}catch(e){}renderHome();}
 function startSession(mode,scope){
@@ -233,8 +235,8 @@ function renderFlash(){
   const idx=sess.q[sess.pos],t=TERMS[idx],n=sess.q.length;
   const k=known.has(idx);
   $("runner").innerHTML=rnBar()
-    +'<div class="rn-body"><div class="rn-card" id="rnCard"><div class="rn-face rn-front"><div class="rn-tag">No.'+String(idx+1).padStart(2,"0")+'</div><div class="rn-ko">'+t[0]+'</div><div class="rn-hint">탭하면 정답</div></div>'
-    +'<div class="rn-face rn-back"><div class="rn-en">'+t[1]+'</div><div class="rn-desc">'+t[2]+'</div><div class="rn-hint">탭하면 단어</div></div></div></div>'
+    +'<div class="rn-body"><div class="rn-card" id="rnCard"><div class="rn-face rn-front"><div class="rn-tag">No.'+String(idx+1).padStart(2,"0")+'</div><div class="rn-ko">'+prim(t)+'</div><div class="rn-hint">'+(lang==="en"?"Tap to reveal":"탭하면 정답")+'</div></div>'
+    +'<div class="rn-face rn-back"><div class="rn-en">'+sec(t)+'</div><div class="rn-desc">'+t[2]+'</div><div class="rn-hint">'+(lang==="en"?"Tap to flip":"탭하면 단어")+'</div></div></div></div>'
     +'<div class="rn-foot"><div class="rn-actions"><button class="rn-know '+(k?"on":"")+'" id="rnKnow">'+(k?"✓ 외움":"외우기")+'</button><button class="rn-speak" id="rnSpeak">'+SPK+' 발음</button></div>'
     +'<div class="rn-nav"><button class="rn-btn" id="rnPrev" '+(sess.pos===0?"disabled":"")+'>← 이전</button><button class="rn-btn primary" id="rnNext">'+(sess.pos===n-1?"완료":"다음 →")+'</button></div></div>';
   const card=$("rnCard");
@@ -250,23 +252,23 @@ function renderFlash(){
 }
 function renderQuiz(){
   const idx=sess.q[sess.pos],t=TERMS[idx],n=sess.q.length;
-  const correct=t[1];
+  const correct=sec(t);
   const pool=shuffle(TERMS.map((x,i)=>i).filter(i=>i!==idx));
   const opts=[correct];
-  for(const i of pool){if(opts.length>=4)break;if(!opts.includes(TERMS[i][1]))opts.push(TERMS[i][1]);}
+  for(const i of pool){if(opts.length>=4)break;const cand=sec(TERMS[i]);if(!opts.includes(cand))opts.push(cand);}
   shuffle(opts);
   $("runner").innerHTML=rnBar()
-    +'<div class="rn-body quiz"><div class="qz-tag">이 단어의 영어는?</div><div class="qz-q">'+t[0]+' <button class="qz-spk" id="qzSpk" aria-label="발음">'+SPK+'</button></div>'
+    +'<div class="rn-body quiz"><div class="qz-tag">'+(lang==="en"?"What is this in Korean?":"이 단어의 영어는?")+'</div><div class="qz-q">'+prim(t)+' <button class="qz-spk" id="qzSpk" aria-label="발음">'+SPK+'</button></div>'
     +'<div class="qz-opts">'+opts.map(o=>'<button class="qz-opt" data-opt="'+esc(o)+'">'+o+'</button>').join("")+'</div></div>'
     +'<div class="rn-foot"><button class="rn-btn primary" id="qzNext" disabled>'+(sess.pos===n-1?"결과 보기":"다음 →")+'</button></div>';
-  $("qzSpk").onclick=()=>speak(correct,$("qzSpk"));
+  $("qzSpk").onclick=()=>speak(t[1],$("qzSpk"));
   let answered=false;
   $$(".qz-opt").forEach(b=>b.onclick=()=>{
     if(answered)return;answered=true;logStudy();
     const ok=b.dataset.opt===correct;
     $$(".qz-opt").forEach(x=>{x.classList.add("done");if(x.dataset.opt===correct)x.classList.add("correct");});
     if(ok){b.classList.add("correct");sess.score++;known.add(idx);save();}else{b.classList.add("wrong");}
-    speak(correct,null);
+    speak(t[1],null);
     $("qzNext").disabled=false;
   });
   $("qzNext").onclick=()=>{sess.pos++;renderRunner();};
@@ -313,3 +315,18 @@ $("search").addEventListener("input",e=>{query=e.target.value.trim();renderList(
 /* ============ 시작 ============ */
 $("rateVal").textContent=curRate.toFixed(2)+"x";
 go("home");
+
+// 언어 토글 (한국어/영어 주표시)
+document.addEventListener("click",e=>{
+  const b=e.target.closest("[data-lang]"); if(!b)return;
+  lang=b.dataset.lang; save();
+  // 토글 UI 업데이트
+  document.querySelectorAll("[data-lang]").forEach(x=>x.classList.toggle("active",x.dataset.lang===lang));
+  // 현재 뷰 재렌더
+  const cur=document.querySelector(".view.show");
+  if(cur){const id=cur.id.replace("view-","");go(id);}
+  // 러너가 열려 있으면 재렌더
+  if(sess&&!$("runner").hidden)renderRunner&&renderRunner();
+});
+// 초기 lang 토글 활성 상태 동기화
+document.querySelectorAll("[data-lang]").forEach(x=>x.classList.toggle("active",x.dataset.lang===lang));
