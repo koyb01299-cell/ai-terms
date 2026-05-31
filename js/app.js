@@ -91,17 +91,30 @@ function loadVoices(){
   sel.value=voices.indexOf(chosenVoice);
 }
 try{if(window.speechSynthesis){loadVoices();speechSynthesis.onvoiceschanged=loadVoices;}}catch(e){}
-function speak(text,btn){
+function speak(text,btn,retry){
   if(!window.speechSynthesis)return;
+  // 방어: 음성 목록이 아직 안 로드됐거나 chosenVoice가 없으면 한국어 폴백 방지
+  if(!voices||!voices.length||!chosenVoice){
+    loadVoices(); // 동기 재시도
+    if((!voices||!voices.length||!chosenVoice)&&!retry){
+      // 비동기로 음성이 도착할 때까지 잠시 대기 후 1회 재시도
+      if(btn){btn.classList.add("playing");}
+      setTimeout(()=>{
+        if(btn)btn.classList.remove("playing");
+        speak(text,btn,true);
+      },350);
+      return;
+    }
+    if(!chosenVoice){console.warn("[TTS] 영어 음성 없음 — 발음 건너뜀");return;} // Konglish 방지
+  }
   speechSynthesis.cancel();
   if(activeBtn)activeBtn.classList.remove("playing");
   if(btn){btn.classList.add("playing");activeBtn=btn;}
-  // 자연스러운 호흡을 위해 구두점 단위로 쪼개서 별개 발화로 큐에 올림
   const parts=(sayText(text).match(/[^,.;:!?\u2014\u2013]+[,.;:!?\u2014\u2013]?/g)||[sayText(text)])
     .map(s=>s.trim()).filter(s=>s.length);
   parts.forEach((chunk,idx)=>{
     const u=new SpeechSynthesisUtterance(chunk);
-    u.lang=chosenVoice?chosenVoice.lang:"en-US"; if(chosenVoice)u.voice=chosenVoice;
+    u.lang=chosenVoice.lang||"en-US"; u.voice=chosenVoice;
     u.rate=curRate*0.85; u.pitch=1.0;
     if(idx===parts.length-1){
       u.onend=u.onerror=()=>{if(btn)btn.classList.remove("playing");};
